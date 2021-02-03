@@ -1,0 +1,5 @@
+#!/bin/bash
+
+gcc main.c -g -o mos
+
+./mos
