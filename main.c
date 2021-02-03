@@ -6,7 +6,7 @@
 typedef uint8_t byte;
 typedef unsigned short word;
 
-typedef struct Cpu {
+struct CPU {
     byte* mem;
     word mem_size;
 
@@ -17,51 +17,44 @@ typedef struct Cpu {
     byte x;
     byte y;
 
-    byte carry: 1;
-    byte zero: 1;
-    byte interrupt_disabled: 1;
-    byte decimal_mode: 1;
-    byte break_command: 1;
-    byte nop: 1;
-    byte overflow: 1;
     byte negative: 1;
+    byte overflow: 1;
+    byte nop: 1;
+    byte break_command: 1;
+    byte decimal_mode: 1;
+    byte interrupt_disabled: 1;
+    byte zero: 1;
+    byte carry: 1;
+};
 
-} CPU;
+struct CPU cpu; // Global CPU instance, everything is 0 by default
 
-CPU cpu; // Global CPU instance, everything is 0 by default
-
-void init(word mem_size) {
-    cpu.mem_size = mem_size;
-    cpu.mem = malloc(mem_size + 1);
+void init(uint32_t mem_size) {
+    cpu.mem_size = mem_size - 1;
+    cpu.mem = malloc(mem_size);
     memset(cpu.mem, 0, mem_size);
     cpu.program_counter = 0X600;
 }
 
+void shutdown() {
+    free(cpu.mem);
+}
+
 void printState() {
     printf("\
-PROGRAM COUNTER\t%.4X\n\
-STACK POINTER\t%.2X\n\
+PROGRAM COUNTER\t%.4X\tNV-BDIZC\n\
+STACK POINTER\t%.2X\t%d%d %d%d%d%d%d\n\
 ACCUMULATOR\t%.2X\n\
 X\t\t%.2X\n\
-Y\t\t%.2X\n\
-CARRY FLAG\t%d\n\
-ZERO FLAG\t%d\n\
-INTERRUPT DIS\t%d\n\
-DECIMAL MODE\t%d\n\
-BREAK COMMAND\t%d\n\
-OVERFLOW FLAG\t%d\n\
-NEGATIVE FLAG\t%d\n\n",
-        cpu.program_counter, cpu.stack_ptr, cpu.acc, cpu.x, cpu.y,
-        cpu.carry, cpu.zero, cpu.interrupt_disabled, cpu.decimal_mode,
-        cpu.break_command, cpu.overflow, cpu.negative);
+Y\t\t%.2X\n",
+        cpu.program_counter, cpu.stack_ptr,
+        cpu.negative, cpu.overflow, cpu.break_command, cpu.decimal_mode,
+        cpu.interrupt_disabled, cpu.zero, cpu.carry,
+        cpu.acc, cpu.x, cpu.y);
 }
 
 void printComputerInfo() {
     printf("MOS 6502 (%dKB)\n\n", (cpu.mem_size + 1) / 1024);
-}
-
-void shutdown() {
-    free(cpu.mem);
 }
 
 void setMem(word mem_addr, byte bytes, byte* data) {
@@ -106,14 +99,14 @@ void execute() {
 
     if (opcode == 0XA9) { // LDA Imediate
         byte arg = loadByteArg();
-        printf("\tLDA #$%.2X\n", arg);
+        printf("-> LDA #$%.2X\n", arg);
         cpu.acc = arg;
         cpu.program_counter += 2;
         checkState();
     } else
     if (opcode == 0XA5) { // LDA Zero Page
         byte arg = loadByteArg();
-        printf("\tLDA $%.2X\n", arg);
+        printf("-> LDA $%.2X\n", arg);
         byte data = cpu.mem[arg];
         cpu.acc = data;
         cpu.program_counter += 2;
@@ -121,7 +114,7 @@ void execute() {
     } else
     if (opcode == 0XB5) { // LDA Zero Page + X
         byte arg = loadByteArg();
-        printf("\tLDA $%.2X\n +X", arg);
+        printf("-> LDA $%.2X\n +X", arg);
         byte data = cpu.mem[arg] + cpu.x;
         cpu.acc = data;
         cpu.program_counter += 2;
@@ -129,7 +122,7 @@ void execute() {
     } else
     if (opcode == 0XAD) { // LDA Absolute /LDA $1FA0
         word arg = loadWordArg();
-        printf("\tLDA $%.4X\n", arg);
+        printf("-> LDA $%.4X\n", arg);
         byte data = cpu.mem[arg];
         cpu.acc = data;
         cpu.program_counter += 3;
@@ -137,7 +130,7 @@ void execute() {
     } else
     if (opcode == 0XBD) { // LDA Absolute + X
         word arg = loadWordArg();
-        printf("\tLDA $%.4X\n +X", arg);
+        printf("-> LDA $%.4X\n +X", arg);
         byte data = cpu.mem[arg] + cpu.x;
         cpu.acc = data;
         cpu.program_counter += 3;
@@ -145,7 +138,7 @@ void execute() {
     } else
     if (opcode == 0XB9) { // LDA Absolute + Y
         word arg = loadWordArg();
-        printf("\tLDA $%.4X\n +Y", arg);
+        printf("-> LDA $%.4X\n +Y", arg);
         byte data = cpu.mem[arg] + cpu.y;
         cpu.acc = data;
         cpu.program_counter += 3;
@@ -153,13 +146,13 @@ void execute() {
     } else
     if (opcode == 0X85) { // STA Zero Page
         byte arg = loadByteArg();
-        printf("\tSTA $%.2X\n", arg);
+        printf("-> STA $%.2X\n", arg);
         cpu.mem[arg] = cpu.acc;
         cpu.program_counter += 2;
     } else
     if (opcode == 0X8D) { // STA Absolute
         word arg = loadWordArg();
-        printf("\tSTA $%.4X\n", arg);
+        printf("-> STA $%.4X\n", arg);
         cpu.mem[arg] = cpu.acc;
         cpu.program_counter += 3;
     }
@@ -170,12 +163,8 @@ void execute() {
     execute();
 }
 
-void run() {
-    execute();
-}
-
 int main(int argc, char argv[]) {
-    init(64 * 1024 - 1);
+    init(64 * 1024);
     printComputerInfo();
 
     byte initialMem[] = {
@@ -188,7 +177,7 @@ int main(int argc, char argv[]) {
     };
 
     setMem(0X600, 15, initialMem);
-    run();
+    execute();
 
     memDump(0X0200, 32);
 
