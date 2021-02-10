@@ -1,7 +1,7 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 typedef uint8_t byte;
 typedef unsigned short word;
@@ -34,6 +34,7 @@ void init(uint32_t mem_size) {
     cpu.mem = malloc(mem_size);
     memset(cpu.mem, 0, mem_size);
     cpu.program_counter = 0X600;
+    cpu.stack_ptr = 0XFF;
 }
 
 void shutdown() {
@@ -42,11 +43,11 @@ void shutdown() {
 
 void printState() {
     printf("\
-PROGRAM COUNTER\t%.4X\tNV-BDIZC\n\
-STACK POINTER\t%.2X\t%d%d %d%d%d%d%d\n\
-ACCUMULATOR\t%.2X\n\
-X\t\t%.2X\n\
-Y\t\t%.2X\n",
+| PROG COUNTER\t%.4X\tNV-BDIZC\n\
+| STACK POINTER\t%.2X\t%d%d %d%d%d%d%d\n\
+| ACCUMULATOR\t%.2X\n\
+| X\t\t%.2X\n\
+| Y\t\t%.2X\n\n",
         cpu.program_counter, cpu.stack_ptr,
         cpu.negative, cpu.overflow, cpu.break_command, cpu.decimal_mode,
         cpu.interrupt_disabled, cpu.zero, cpu.carry,
@@ -65,15 +66,14 @@ void setMem(word mem_addr, byte bytes, byte* data) {
 
 void memDump(word mem_addr, byte bytes) {
     byte cols = 16;
-    printf("MEM DUMP (%dB)\n", bytes);
+    printf("| MEM DUMP (%dB)\n", bytes);
     for (byte i = 0; i <= (bytes - 1) / cols; ++i) {
-        printf("%.4X ", mem_addr + (i * cols));
+        printf("| %.4X ", mem_addr + (i * cols));
         for (byte j = 0; j < (i == ((bytes - 1) / cols) ? bytes - (i * cols) : cols); ++j) {
             printf(" %.2X", cpu.mem[mem_addr + (i * cols) + j]);
         }
         printf("\n");
     }
-    printf("\n");
 }
 
 void checkState() {
@@ -91,22 +91,36 @@ word loadWordArg() {
     return ((word)arg1 << 8) | (word)arg2;
 }
 
+word getIndirectIndexedAddress(byte arg) {
+    byte addr_low = cpu.mem[arg] + cpu.y;
+    byte addr_high = cpu.mem[arg] + cpu.y + 1;
+    return ((word)addr_high << 8) | (word)addr_low;
+}
+
+word getIndexedIndirectAddress(byte arg) {
+    byte addr_low = cpu.mem[arg + cpu.x];
+    byte addr_high = cpu.mem[arg + cpu.x + 1];
+    return ((word)addr_high < 8) | addr_low;
+}
+
 void execute() {
     byte opcode = cpu.mem[cpu.program_counter];
 
-    //byte bytes = INS_MATRIX[opcode] - 1;
     memDump(cpu.program_counter, 8);
 
+    getchar();
+
+    // LDA
     if (opcode == 0XA9) { // LDA Imediate
         byte arg = loadByteArg();
-        printf("-> LDA #$%.2X\n", arg);
+        printf("LDA #$%.2X\n", arg);
         cpu.acc = arg;
         cpu.program_counter += 2;
         checkState();
     } else
     if (opcode == 0XA5) { // LDA Zero Page
         byte arg = loadByteArg();
-        printf("-> LDA $%.2X\n", arg);
+        printf("LDA $%.2X\n", arg);
         byte data = cpu.mem[arg];
         cpu.acc = data;
         cpu.program_counter += 2;
@@ -114,15 +128,15 @@ void execute() {
     } else
     if (opcode == 0XB5) { // LDA Zero Page + X
         byte arg = loadByteArg();
-        printf("-> LDA $%.2X\n +X", arg);
-        byte data = cpu.mem[arg] + cpu.x;
+        printf("LDA $%.2X, X\n", arg);
+        byte data = cpu.mem[arg + cpu.x];
         cpu.acc = data;
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XAD) { // LDA Absolute /LDA $1FA0
+    if (opcode == 0XAD) { // LDA Absolute
         word arg = loadWordArg();
-        printf("-> LDA $%.4X\n", arg);
+        printf("LDA $%.4X\n", arg);
         byte data = cpu.mem[arg];
         cpu.acc = data;
         cpu.program_counter += 3;
@@ -130,36 +144,124 @@ void execute() {
     } else
     if (opcode == 0XBD) { // LDA Absolute + X
         word arg = loadWordArg();
-        printf("-> LDA $%.4X\n +X", arg);
-        byte data = cpu.mem[arg] + cpu.x;
+        printf("LDA $%.4X, X\n", arg);
+        byte data = cpu.mem[arg + cpu.x];
         cpu.acc = data;
         cpu.program_counter += 3;
         checkState();
     } else
     if (opcode == 0XB9) { // LDA Absolute + Y
         word arg = loadWordArg();
-        printf("-> LDA $%.4X\n +Y", arg);
-        byte data = cpu.mem[arg] + cpu.y;
+        printf("LDA $%.4X, Y\n", arg);
+        byte data = cpu.mem[arg + cpu.y];
         cpu.acc = data;
         cpu.program_counter += 3;
         checkState();
     } else
+    if (opcode == 0XA1) { // LDA (Indirect, X) (Indexed Indirect)
+        byte arg = loadByteArg();
+        printf("LDA ($%.2X, X)\n", arg);
+        byte data = cpu.mem[getIndexedIndirectAddress(arg)];
+        cpu.acc = data;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XB1) { // LDA (Indirect), Y (Indirect Indexed)
+        byte arg = loadByteArg();
+        printf("LDA ($%.2X), Y\n", arg);
+        byte data = cpu.mem[getIndirectIndexedAddress(arg)];
+        cpu.acc = data;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    // STA
     if (opcode == 0X85) { // STA Zero Page
         byte arg = loadByteArg();
-        printf("-> STA $%.2X\n", arg);
+        printf("STA $%.2X\n", arg);
         cpu.mem[arg] = cpu.acc;
+        cpu.program_counter += 2;
+    } else
+    if (opcode == 0X95) { // STA Zero Page + X
+        byte arg = loadByteArg();
+        printf("STA $%.2X, X\n", arg);
+        cpu.mem[arg + cpu.x] = cpu.acc;
         cpu.program_counter += 2;
     } else
     if (opcode == 0X8D) { // STA Absolute
         word arg = loadWordArg();
-        printf("-> STA $%.4X\n", arg);
+        printf("STA $%.4X\n", arg);
         cpu.mem[arg] = cpu.acc;
         cpu.program_counter += 3;
+    } else
+    if (opcode == 0X9D) { // STA Absolute + X
+        word arg = loadWordArg();
+        printf("STA $%.4X\n", arg);
+        cpu.mem[arg + cpu.x] = cpu.acc;
+        cpu.program_counter += 3;
+    } else
+    if (opcode == 0X99) { // STA Absolute + Y
+        word arg = loadWordArg();
+        printf("STA $%.4X\n", arg);
+        cpu.mem[arg + cpu.y] = cpu.acc;
+        cpu.program_counter += 3;
+    } else
+    if (opcode == 0X81) { // STA (Indirect, X) (Indexed Indirect)
+        byte arg = loadByteArg();
+        printf("STA ($%.2X, X)\n", arg);
+        cpu.acc = cpu.mem[getIndexedIndirectAddress(arg)];
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0X91) { // STA (Indirect), Y (Indirect Indexed)
+        byte arg = loadByteArg();
+        printf("STA ($%.2X), Y\n", arg);
+        cpu.acc = cpu.mem[getIndirectIndexedAddress(arg)];
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    // LDX
+    if (opcode == 0XA2) { // LDX Imediate
+        byte arg = loadByteArg();
+        printf("LDX #$%.2X\n", arg);
+        cpu.x = arg;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XA6) { // LDX Zero Page
+        byte arg = loadByteArg();
+        printf("LDX $%.2X\n", arg);
+        byte data = cpu.mem[arg];
+        cpu.x = data;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XB6) { // LDX Zero Page + Y
+        byte arg = loadByteArg();
+        printf("LDX $%.2X, Y\n", arg);
+        byte data = cpu.mem[arg + cpu.y];
+        cpu.x = data;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XAE) { // LDX Absolute
+        word arg = loadWordArg();
+        printf("LDX $%.4X\n", arg);
+        byte data = cpu.mem[arg];
+        cpu.x = data;
+        cpu.program_counter += 3;
+        checkState();
+    } else
+    if (opcode == 0XBE) { // LDX Absolute + Y
+        word arg = loadWordArg();
+        printf("LDX $%.4X, Y\n", arg);
+        byte data = cpu.mem[arg + cpu.y];
+        cpu.x = data;
+        cpu.program_counter += 3;
+        checkState();
     }
     else return;
 
     printState();
-    getchar();
     execute();
 }
 
@@ -167,19 +269,34 @@ int main(int argc, char argv[]) {
     init(64 * 1024);
     printComputerInfo();
 
-    byte initialMem[] = {
-        0XA9, 0X01,
-        0X8D, 0X00, 0X02,
-        0XA9, 0X05,
-        0X8D, 0X01, 0X02,
-        0XA9, 0X0A,
-        0X8D, 0X02, 0X02
+    //byte initialMem[] = {
+    //    0XA9, 0X01,
+    //    0X8D, 0X00, 0X02,
+    //    0XA9, 0X05,
+    //    0X8D, 0X01, 0X02,
+    //    0XA9, 0X0A,
+    //    0X8D, 0X02, 0X02
+    //};
+
+    byte mem[] = {
+        0XA9, 0X26,
+        0X85, 0X03,
+        0XA9, 0X25,
+        0X85, 0X02,
+        0XA9, 0X24,
+        0X85, 0X01,
+
+        0XA9, 0X23,
+        0X85, 0X00,
+        0XA9, 0X00,
+        0XA2, 0X02,
+        0XB5, 0X00
     };
 
-    setMem(0X600, 15, initialMem);
+    setMem(0X600, 22, mem);
     execute();
 
-    memDump(0X0200, 32);
+    memDump(0X0000, 32);
 
     shutdown();
     return 0;

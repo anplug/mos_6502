@@ -2,4 +2,6 @@
 
 gcc main.c -g -o mos
 
+if [ $? -eq 0 ]; then
 ./mos
+fi
