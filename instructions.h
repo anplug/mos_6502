@@ -7,12 +7,6 @@ typedef uint8_t byte;
 typedef unsigned short word;
 
 void initInsMatrix();
-
-//typedef struct Instruction {
-//    // Mnemonic
-//    byte opcode;
-//
-//    byte bytes;
-//} INS;
+void getInsRules(byte opcode, byte *bytes, byte *addressing_mode, byte *target);
 
 #endif

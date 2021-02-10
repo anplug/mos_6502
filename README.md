@@ -65,3 +65,36 @@ The overflow flag is set during arithmetic operations if the result has yielded 
 #### Negative Flag
 The negative flag is set if the result of the last operation had bit 7 set to a one.
 
+## Instructrion Processing Methods Concepts:
+
+### Encoding (draft)
+
+Encode all instruction rules into single 2 or 4 byte number
+
+`rule = getRuleforOpcode(opcode);`
+Rule format `0000 0000`
+
+01 = amount of bytes:
+* 01 -> 1
+* 10 -> 2
+* 11 -> 3
+
+2345 = addressing mode:
+* 0000 -> implicit
+* 0001 -> accumulator (? same as implicit)
+* 0010 -> imediate (8-bit constant)
+* 0011 -> zero page
+* 0100 -> zero page + X
+* 0101 -> zero page + Y
+* 0110 -> relative
+* 0111 -> absolute
+* 1000 -> absolute + X
+* 1001 -> absolute + Y
+* 1010 -> indirect
+* 1011 -> indirect + X
+* 1100 -> indirect + Y
+
+67 = target:
+* 00 - zero page
+* 01 - accumulator
+* 10 - memory
