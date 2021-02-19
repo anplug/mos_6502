@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir -p build
-gcc main.c cpu.c -g -o build/mos
+gcc cpu.c tests.c -g -o build/tests
 
 if [ $? -eq 0 ]; then
-./build/mos
+./build/tests
 fi
