@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include "macros.h"
 
 struct CPU cpu; // Global CPU instance, everything is 0 by default
 
@@ -91,151 +92,151 @@ short tick() {
     byte opcode = cpu.mem[cpu.program_counter];
 
     // LDA
-    if (opcode == 0XA9) { // LDA Imediate
-        byte arg = loadByteArg();
-        printf("LDA #$%.2X\n", arg);
+    if (opcode == 0XA9) {
+        IMEDIATE(LDA);
         cpu.acc = arg;
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XA5) { // LDA Zero Page
-        byte arg = loadByteArg();
-        printf("LDA $%.2X\n", arg);
-        byte data = cpu.mem[arg];
-        cpu.acc = data;
+    if (opcode == 0XA5) {
+        ZERO_PAGE(LDA);
+        cpu.acc = cpu.mem[arg];
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XB5) { // LDA Zero Page + X
-        byte arg = loadByteArg();
-        printf("LDA $%.2X, X\n", arg);
-        byte data = cpu.mem[arg + cpu.x];
-        cpu.acc = data;
+    if (opcode == 0XB5) {
+        ZERO_PAGE_X(LDA);
+        cpu.acc = cpu.mem[arg + cpu.x];
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XAD) { // LDA Absolute
-        word arg = loadWordArg();
-        printf("LDA $%.4X\n", arg);
-        byte data = cpu.mem[arg];
-        cpu.acc = data;
+    if (opcode == 0XAD) {
+        ABSOLUTE(LDA);
+        cpu.acc = cpu.mem[arg];
         cpu.program_counter += 3;
         checkState();
     } else
-    if (opcode == 0XBD) { // LDA Absolute + X
-        word arg = loadWordArg();
-        printf("LDA $%.4X, X\n", arg);
-        byte data = cpu.mem[arg + cpu.x];
-        cpu.acc = data;
+    if (opcode == 0XBD) {
+        ABSOLUTE_X(LDA);
+        cpu.acc = cpu.mem[arg + cpu.x];
         cpu.program_counter += 3;
         checkState();
     } else
-    if (opcode == 0XB9) { // LDA Absolute + Y
-        word arg = loadWordArg();
-        printf("LDA $%.4X, Y\n", arg);
-        byte data = cpu.mem[arg + cpu.y];
-        cpu.acc = data;
+    if (opcode == 0XB9) {
+        ABSOLUTE_Y(LDA);
+        cpu.acc = cpu.mem[arg + cpu.y];
         cpu.program_counter += 3;
         checkState();
     } else
-    if (opcode == 0XA1) { // LDA (Indirect, X) (Indexed Indirect)
-        byte arg = loadByteArg();
-        printf("LDA ($%.2X, X)\n", arg);
-        byte data = cpu.mem[getIndexedIndirectAddress(arg)];
-        cpu.acc = data;
-        cpu.program_counter += 2;
-        checkState();
-    } else
-    if (opcode == 0XB1) { // LDA (Indirect), Y (Indirect Indexed)
-        byte arg = loadByteArg();
-        printf("LDA ($%.2X), Y\n", arg);
-        byte data = cpu.mem[getIndirectIndexedAddress(arg)];
-        cpu.acc = data;
-        cpu.program_counter += 2;
-        checkState();
-    } else
-    // STA
-    if (opcode == 0X85) { // STA Zero Page
-        byte arg = loadByteArg();
-        printf("STA $%.2X\n", arg);
-        cpu.mem[arg] = cpu.acc;
-        cpu.program_counter += 2;
-    } else
-    if (opcode == 0X95) { // STA Zero Page + X
-        byte arg = loadByteArg();
-        printf("STA $%.2X, X\n", arg);
-        cpu.mem[arg + cpu.x] = cpu.acc;
-        cpu.program_counter += 2;
-    } else
-    if (opcode == 0X8D) { // STA Absolute
-        word arg = loadWordArg();
-        printf("STA $%.4X\n", arg);
-        cpu.mem[arg] = cpu.acc;
-        cpu.program_counter += 3;
-    } else
-    if (opcode == 0X9D) { // STA Absolute + X
-        word arg = loadWordArg();
-        printf("STA $%.4X\n", arg);
-        cpu.mem[arg + cpu.x] = cpu.acc;
-        cpu.program_counter += 3;
-    } else
-    if (opcode == 0X99) { // STA Absolute + Y
-        word arg = loadWordArg();
-        printf("STA $%.4X\n", arg);
-        cpu.mem[arg + cpu.y] = cpu.acc;
-        cpu.program_counter += 3;
-    } else
-    if (opcode == 0X81) { // STA (Indirect, X) (Indexed Indirect)
-        byte arg = loadByteArg();
-        printf("STA ($%.2X, X)\n", arg);
+    if (opcode == 0XA1) {
+        INDIRECT_X(LDA);
         cpu.acc = cpu.mem[getIndexedIndirectAddress(arg)];
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0X91) { // STA (Indirect), Y (Indirect Indexed)
-        byte arg = loadByteArg();
-        printf("STA ($%.2X), Y\n", arg);
+    if (opcode == 0XB1) {
+        INDIRECT_Y(LDA);
         cpu.acc = cpu.mem[getIndirectIndexedAddress(arg)];
         cpu.program_counter += 2;
         checkState();
     } else
+    // STA
+    if (opcode == 0X85) {
+        ZERO_PAGE(STA);
+        cpu.mem[arg] = cpu.acc;
+        cpu.program_counter += 2;
+    } else
+    if (opcode == 0X95) {
+        ZERO_PAGE_X(STA);
+        cpu.mem[arg + cpu.x] = cpu.acc;
+        cpu.program_counter += 2;
+    } else
+    if (opcode == 0X8D) {
+        ABSOLUTE(STA);
+        cpu.mem[arg] = cpu.acc;
+        cpu.program_counter += 3;
+    } else
+    if (opcode == 0X9D) {
+        ABSOLUTE_X(STA);
+        cpu.mem[arg + cpu.x] = cpu.acc;
+        cpu.program_counter += 3;
+    } else
+    if (opcode == 0X99) {
+        ABSOLUTE_Y(STA);
+        cpu.mem[arg + cpu.y] = cpu.acc;
+        cpu.program_counter += 3;
+    } else
+    if (opcode == 0X81) {
+        INDIRECT_X(STA);
+        cpu.mem[getIndexedIndirectAddress(arg)] = cpu.acc;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0X91) {
+        INDIRECT_Y(STA);
+        cpu.mem[getIndirectIndexedAddress(arg)] = cpu.acc;
+        cpu.program_counter += 2;
+        checkState();
+    } else
     // LDX
-    if (opcode == 0XA2) { // LDX Imediate
-        byte arg = loadByteArg();
-        printf("LDX #$%.2X\n", arg);
+    if (opcode == 0XA2) {
+        IMEDIATE(LDX);
         cpu.x = arg;
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XA6) { // LDX Zero Page
-        byte arg = loadByteArg();
-        printf("LDX $%.2X\n", arg);
-        byte data = cpu.mem[arg];
-        cpu.x = data;
+    if (opcode == 0XA6) {
+        ZERO_PAGE(LDX);
+        cpu.x = cpu.mem[arg];
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XB6) { // LDX Zero Page + Y
-        byte arg = loadByteArg();
-        printf("LDX $%.2X, Y\n", arg);
-        byte data = cpu.mem[arg + cpu.y];
-        cpu.x = data;
+    if (opcode == 0XB6) {
+        ZERO_PAGE_Y(LDX);
+        cpu.x = cpu.mem[arg + cpu.y];
         cpu.program_counter += 2;
         checkState();
     } else
-    if (opcode == 0XAE) { // LDX Absolute
-        word arg = loadWordArg();
-        printf("LDX $%.4X\n", arg);
-        byte data = cpu.mem[arg];
-        cpu.x = data;
+    if (opcode == 0XAE) {
+        ABSOLUTE(LDX);
+        cpu.x = cpu.mem[arg];
         cpu.program_counter += 3;
         checkState();
     } else
-    if (opcode == 0XBE) { // LDX Absolute + Y
-        word arg = loadWordArg();
-        printf("LDX $%.4X, Y\n", arg);
-        byte data = cpu.mem[arg + cpu.y];
-        cpu.x = data;
+    if (opcode == 0XBE) {
+        ABSOLUTE_Y(LDX);
+        cpu.x = cpu.mem[arg + cpu.y];
+        cpu.program_counter += 3;
+        checkState();
+    } else
+    // LDY
+    if (opcode == 0XA0) {
+        IMEDIATE(LDY);
+        cpu.y = arg;
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XA4) {
+        ZERO_PAGE(LDY);
+        cpu.y = cpu.mem[arg];
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XB4) {
+        ZERO_PAGE_X(LDY);
+        cpu.y = cpu.mem[arg + cpu.x];
+        cpu.program_counter += 2;
+        checkState();
+    } else
+    if (opcode == 0XAC) {
+        ABSOLUTE(LDY);
+        cpu.y = cpu.mem[arg];
+        cpu.program_counter += 3;
+        checkState();
+    } else
+    if (opcode == 0XBC) {
+        ABSOLUTE_X(LDY);
+        cpu.y = cpu.mem[arg + cpu.x];
         cpu.program_counter += 3;
         checkState();
     }
