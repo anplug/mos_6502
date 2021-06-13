@@ -8,6 +8,8 @@
 
 typedef uint8_t byte;
 typedef unsigned short word;
+typedef void (*inst_ptr_t)();
+typedef char bool;
 
 struct CPU {
     byte* mem;
@@ -43,5 +45,6 @@ word getIndirectIndexedAddress(byte arg);
 word getIndexedIndirectAddress(byte arg);
 void execute();
 short tick();
+bool is_opcode_valid(byte opcode);
 
 #endif // CPU_H
