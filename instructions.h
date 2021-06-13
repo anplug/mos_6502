@@ -169,6 +169,46 @@ void LDY_Abs_X() {
     checkState();
 }
 
+void LSR_Acc() {
+    ACCUMULATOR(LSR);
+    cpu.carry = cpu.acc & 1;
+    cpu.acc = cpu.acc >> 1;
+    cpu.program_counter += 1;
+    checkState();
+}
+
+void LSR_Zero() {
+    ZERO_PAGE(LSR);
+    cpu.carry = cpu.mem[arg] & 1;
+    cpu.acc = cpu.mem[arg] >> 1;
+    cpu.program_counter += 2;
+    checkState();
+}
+
+void LSR_Zero_X() {
+    ZERO_PAGE_X(LSR);
+    cpu.carry = cpu.mem[arg + cpu.x] & 1;
+    cpu.acc = cpu.mem[arg + cpu.x] >> 1;
+    cpu.program_counter += 2;
+    checkState();
+}
+
+void LSR_Abs() {
+    ABSOLUTE(LSR);
+    cpu.carry = cpu.mem[arg] & 1;
+    cpu.acc = cpu.mem[arg] >> 1;
+    cpu.program_counter += 3;
+    checkState();
+}
+
+void LSR_Abs_X() {
+    ABSOLUTE_X(LSR);
+    cpu.carry = cpu.mem[arg + cpu.x] & 1;
+    cpu.acc = cpu.mem[arg + cpu.x] >> 1;
+    cpu.program_counter += 3;
+    checkState();
+}
+
 inst_ptr_t inst_matrix[256] = {
     [0XA9] = &LDA_Imediate,
     [0XA5] = &LDA_Zero,
@@ -197,5 +237,11 @@ inst_ptr_t inst_matrix[256] = {
     [0XA4] = &LDY_Zero,
     [0XB4] = &LDY_Zero_Y,
     [0XAC] = &LDY_Abs,
-    [0XBC] = &LDY_Abs_X
+    [0XBC] = &LDY_Abs_X,
+
+    [0X4A] = &LSR_Acc,
+    [0X46] = &LSR_Zero,
+    [0X56] = &LSR_Zero_X,
+    [0X4E] = &LSR_Abs,
+    [0X5E] = &LSR_Abs_X
 };
