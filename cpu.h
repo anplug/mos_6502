@@ -33,6 +33,7 @@ struct CPU {
 };
 
 void init(uint32_t mem_size);
+void reset();
 void shutdown();
 void printState();
 void printComputerInfo();

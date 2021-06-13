@@ -13,8 +13,26 @@ void init(uint32_t mem_size) {
     cpu.stack_ptr = 0XFF;
 }
 
+void reset() {
+    shutdown();
+    init(cpu.mem_size + 1);
+}
+
 void shutdown() {
     free(cpu.mem);
+
+    cpu.program_counter = 0;;
+    cpu.stack_ptr = 0;
+    cpu.acc = 0;
+    cpu.x = 0;
+    cpu.y = 0;
+    cpu.negative = 0;
+    cpu.overflow = 0;
+    cpu.break_command = 0;
+    cpu.decimal_mode = 0;
+    cpu.interrupt_disabled = 0;
+    cpu.zero = 0;
+    cpu.carry = 0;
 }
 
 void printState() {

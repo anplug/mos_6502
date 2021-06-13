@@ -1,6 +1,9 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#define ACCUMULATOR(ins) \
+    printf(#ins " A\n");
+
 #define IMEDIATE(ins) \
     byte arg = loadByteArg(); \
     printf(#ins " #$%.2X\n", arg);
