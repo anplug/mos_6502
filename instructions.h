@@ -1,5 +1,18 @@
 #include "cpu.h"
 
+word getIndirectIndexedAddress(byte arg) {
+    byte addr_low = cpu.mem[arg] + cpu.y;
+    byte carry = addr_low < cpu.y ? 1 : 0;
+    byte addr_high = cpu.mem[arg + 1] + carry;
+    return ((word)addr_high << 8) | (word)addr_low;
+}
+
+word getIndexedIndirectAddress(byte arg) {
+    byte addr_low = cpu.mem[arg + cpu.x];
+    byte addr_high = cpu.mem[arg + cpu.x + 1];
+    return ((word)addr_high << 8) | (word)addr_low;
+}
+
 void LDA_Imediate() {
     IMEDIATE(LDA);
     cpu.acc = arg;
@@ -34,6 +47,7 @@ void LDA_Abs_X() {
     cpu.program_counter += 3;
     checkState();
 }
+
 void LDA_Abs_Y() {
     ABSOLUTE_Y(LDA);
     cpu.acc = cpu.mem[arg + cpu.y];
