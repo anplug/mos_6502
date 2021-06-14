@@ -58,13 +58,36 @@ void setMem(word mem_addr, byte bytes, byte* data) {
     }
 }
 
+void setMemByte(word mem_addr, byte data) {
+    cpu.mem[mem_addr] = data;
+}
+
+void setMemWord(word mem_addr, byte data1, byte data2) {
+    cpu.mem[mem_addr] = data1;
+    cpu.mem[mem_addr + 1] = data2;
+}
+
+void setOp(byte opcode) {
+    cpu.mem[cpu.program_counter] = opcode;
+}
+
+void setOpByteArg(byte opcode, byte arg) {
+    cpu.mem[cpu.program_counter] = opcode;
+    cpu.mem[cpu.program_counter + 1] = arg;
+}
+
+void setOpWordArg(byte opcode, byte arg1, byte arg2) {
+    cpu.mem[cpu.program_counter] = opcode;
+    cpu.mem[cpu.program_counter + 1] = arg1;
+    cpu.mem[cpu.program_counter + 2] = arg2;
+}
+
 void memDump(word mem_addr, byte bytes) {
-    byte cols = 16;
     printf("| MEM DUMP (%dB)\n", bytes);
-    for (byte i = 0; i <= (bytes - 1) / cols; ++i) {
-        printf("| %.4X ", mem_addr + (i * cols));
-        for (byte j = 0; j < (i == ((bytes - 1) / cols) ? bytes - (i * cols) : cols); ++j) {
-            printf(" %.2X", cpu.mem[mem_addr + (i * cols) + j]);
+    for (byte i = 0; i <= (bytes - 1) / DUMP_COLUMNS; ++i) {
+        printf("| %.4X ", mem_addr + (i * DUMP_COLUMNS));
+        for (byte j = 0; j < (i == ((bytes - 1) / DUMP_COLUMNS) ? bytes - (i * DUMP_COLUMNS) : DUMP_COLUMNS); ++j) {
+            printf(" %.2X", cpu.mem[mem_addr + (i * DUMP_COLUMNS) + j]);
         }
         printf("\n");
     }
@@ -85,18 +108,6 @@ word loadWordArg() {
     return ((word)arg1 << 8) | (word)arg2;
 }
 
-word getIndirectIndexedAddress(byte arg) {
-    byte addr_low = cpu.mem[arg] + cpu.y;
-    byte addr_high = cpu.mem[arg] + cpu.y + 1;
-    return ((word)addr_high << 8) | (word)addr_low;
-}
-
-word getIndexedIndirectAddress(byte arg) {
-    byte addr_low = cpu.mem[arg + cpu.x];
-    byte addr_high = cpu.mem[arg + cpu.x + 1];
-    return ((word)addr_high < 8) | addr_low;
-}
-
 void execute() {
     memDump(cpu.program_counter, 8);
     getchar();
@@ -106,8 +117,6 @@ void execute() {
     }
 }
 
-// 0 -> executed
-// -1 -> opcode invalid
 short tick() {
     byte opcode = cpu.mem[cpu.program_counter];
     if (!is_opcode_valid(opcode)) {

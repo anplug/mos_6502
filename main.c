@@ -28,7 +28,7 @@ int main(int argc, char argv[]) {
         0XB5, 0X00
     };
 
-    setMem(0X600, 22, mem);
+    setMem(0X600, 22, mem); // Virtual ROM loading
     execute();
 
     memDump(0X0000, 32);

@@ -6,6 +6,8 @@
 #ifndef CPU_H
 #define CPU_H
 
+#define DUMP_COLUMNS 16
+
 typedef uint8_t byte;
 typedef unsigned short word;
 typedef void (*inst_ptr_t)();
@@ -38,12 +40,15 @@ void shutdown();
 void printState();
 void printComputerInfo();
 void setMem(word mem_addr, byte bytes, byte* data);
+void setMemByte(word mem_addr, byte data);
+void setMemWord(word mem_addr, byte data1, byte data2);
+void setOp(byte optcode);
+void setOpByteArg(byte optcode, byte arg);
+void setOpWordArg(byte optcode, byte arg1, byte arg2);
 void memDump(word mem_addr, byte bytes);
 void checkState();
 byte loadByteArg();
 word loadWordArg();
-word getIndirectIndexedAddress(byte arg);
-word getIndexedIndirectAddress(byte arg);
 void execute();
 short tick();
 bool is_opcode_valid(byte opcode);
