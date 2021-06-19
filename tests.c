@@ -154,7 +154,7 @@ int main(int argc, char argv[]) {
     setMemByte(0X04, 0X28);
     cpu.y = 1;
     tick();
-    is_eql("LDA_Zero_Y sets value to X", cpu.x, 0X28);
+    is_eql("LDX_Zero_Y sets value to X", cpu.x, 0X28);
 
     reset();
     setOpWordArg(0XAE, 0X02, 0X08);
@@ -168,6 +168,39 @@ int main(int argc, char argv[]) {
     cpu.y = 1;
     tick();
     is_eql("LDX_Abs_Y sets value to X", cpu.x, 0X32);
+
+    // LDY
+
+    reset();
+    setOpByteArg(0XA0, 0X26);
+    tick();
+    is_eql("LDY_Imediate sets value to Y", cpu.y, 0X26);
+
+    reset();
+    setOpByteArg(0XA4, 0X02);
+    setMemByte(0X02, 0X27);
+    tick();
+    is_eql("LDY_Zero sets value to Y", cpu.y, 0X27);
+
+    reset();
+    setOpByteArg(0XB4, 0X03);
+    setMemByte(0X04, 0X28);
+    cpu.x = 1;
+    tick();
+    is_eql("LDY_Zero_X sets value to Y", cpu.y, 0X28);
+
+    reset();
+    setOpWordArg(0XAC, 0X02, 0X08);
+    setMemByte(0X0802, 0X29);
+    tick();
+    is_eql("LDY_Abs sets value to Y", cpu.y, 0X29);
+
+    reset();
+    setOpWordArg(0XBC, 0X02, 0X0F);
+    setMemByte(0X0F03, 0X32);
+    cpu.x = 1;
+    tick();
+    is_eql("LDY_Abs_X sets value to Y", cpu.y, 0X32);
 
     // LSR
 
