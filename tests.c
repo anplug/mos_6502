@@ -137,6 +137,40 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("STA_Ind_Y with Carry sets Acc value to mem addr", cpu.mem[0X0201], 0XA4);
 
+    // LDX
+
+    setOpByteArg(0XA2, 0X26);
+    tick();
+    is_eql("LDX_Imediate sets value to X", cpu.x, 0X26);
+
+    reset();
+    setOpByteArg(0XA6, 0X02);
+    setMemByte(0X02, 0X27);
+    tick();
+    is_eql("LDX_Zero sets value to X", cpu.x, 0X27);
+
+    reset();
+    setOpByteArg(0XB6, 0X03);
+    setMemByte(0X04, 0X28);
+    cpu.y = 1;
+    tick();
+    is_eql("LDA_Zero_Y sets value to X", cpu.x, 0X28);
+
+    reset();
+    setOpWordArg(0XAE, 0X02, 0X08);
+    setMemByte(0X0802, 0X29);
+    tick();
+    is_eql("LDX_Abs sets value to X", cpu.x, 0X29);
+
+    reset();
+    setOpWordArg(0XBE, 0X02, 0X0F);
+    setMemByte(0X0F03, 0X32);
+    cpu.y = 1;
+    tick();
+    is_eql("LDX_Abs_Y sets value to X", cpu.x, 0X32);
+
+    // LSR
+
     reset();
     setOp(0X4A);
     cpu.acc = 15;
