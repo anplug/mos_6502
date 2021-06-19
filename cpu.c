@@ -1,5 +1,4 @@
 #include "cpu.h"
-#include "macros.h"
 
 struct CPU cpu; // Global CPU instance, everything is 0 by default
 
