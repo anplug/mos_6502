@@ -222,6 +222,42 @@ void STA_Ind_Y() {
     checkState();
 }
 
+void STX_Zero() {
+    ZERO_PAGE(STA);
+    cpu.mem[arg] = cpu.x;
+    cpu.program_counter += 2;
+}
+
+void STX_Zero_Y() {
+    ZERO_PAGE_X(STA);
+    cpu.mem[arg + cpu.y] = cpu.x;
+    cpu.program_counter += 2;
+}
+
+void STX_Abs() {
+    ABSOLUTE(STA);
+    cpu.mem[arg] = cpu.x;
+    cpu.program_counter += 3;
+}
+
+void STY_Zero() {
+    ZERO_PAGE(STA);
+    cpu.mem[arg] = cpu.y;
+    cpu.program_counter += 2;
+}
+
+void STY_Zero_X() {
+    ZERO_PAGE_X(STA);
+    cpu.mem[arg + cpu.x] = cpu.y;
+    cpu.program_counter += 2;
+}
+
+void STY_Abs() {
+    ABSOLUTE(STA);
+    cpu.mem[arg] = cpu.y;
+    cpu.program_counter += 3;
+}
+
 void LSR_Acc() {
     ACCUMULATOR(LSR);
     cpu.carry = cpu.acc & 1;
@@ -291,6 +327,14 @@ inst_ptr_t inst_matrix[256] = {
     [0X99] = &STA_Abs_Y,
     [0X81] = &STA_Ind_X,
     [0X91] = &STA_Ind_Y,
+
+    [0X86] = &STX_Zero,
+    [0X96] = &STX_Zero_Y,
+    [0X8E] = &STX_Abs,
+
+    [0X84] = &STY_Zero,
+    [0X94] = &STY_Zero_X,
+    [0X8C] = &STY_Abs,
 
     [0X4A] = &LSR_Acc,
     [0X46] = &LSR_Zero,

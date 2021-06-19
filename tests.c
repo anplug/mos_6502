@@ -4,12 +4,21 @@ extern struct CPU cpu;
 
 void is_eql(const char* str, word res, word expected) {
     char spec_result[32];
+    bool is_failed = 0;
     if (res == expected) {
         sprintf(spec_result, "Success");
     } else {
+        is_failed = 1;
         sprintf(spec_result, "Fail (%.4X != %.4X)", res, expected);
     }
-    printf("%s => %s\n", str, spec_result);
+    printf("%s => ", str);
+    if (is_failed) {
+        printf("\033[0;31m"); // Red
+    } else {
+        printf("\033[0;32m"); // Green
+    }
+    printf("%s\n", spec_result);
+    printf("\033[0m"); // Back to default
 }
 
 int main(int argc, char argv[]) {
@@ -201,6 +210,48 @@ int main(int argc, char argv[]) {
     cpu.y = 3;
     tick();
     is_eql("STA_Ind_Y with Carry sets Acc value to mem addr", cpu.mem[0X0201], 0XA4);
+
+    // STX
+
+    reset();
+    setOpByteArg(0X86, 0X02);
+    cpu.x = 0X21;
+    tick();
+    is_eql("STX_Zero sets X value to mem addr", cpu.mem[0X02], 0X21);
+
+    reset();
+    setOpByteArg(0X96, 0X03);
+    cpu.x = 0X22;
+    cpu.y = 1;
+    tick();
+    is_eql("STX_Zero_Y sets X value to mem addr", cpu.mem[0X04], 0X22);
+
+    reset();
+    setOpWordArg(0X8E, 0X02, 0X0C);
+    cpu.x = 0X23;
+    tick();
+    is_eql("STX_Abs sets X value to mem addr", cpu.mem[0X0C02], 0X23);
+
+    // STY
+
+    reset();
+    setOpByteArg(0X84, 0X02);
+    cpu.y = 0X21;
+    tick();
+    is_eql("STY_Zero sets Y value to mem addr", cpu.mem[0X02], 0X21);
+
+    reset();
+    setOpByteArg(0X94, 0X03);
+    cpu.y = 0X22;
+    cpu.x = 1;
+    tick();
+    is_eql("STY_Zero_X sets Y value to mem addr", cpu.mem[0X04], 0X22);
+
+    reset();
+    setOpWordArg(0X8C, 0X02, 0X0C);
+    cpu.y = 0X23;
+    tick();
+    is_eql("STY_Abs sets Y value to mem addr", cpu.mem[0X0C02], 0X23);
 
     // LSR
 
