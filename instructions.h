@@ -276,7 +276,7 @@ inst_ptr_t inst_matrix[256] = {
     [0X95] = &STA_Zero_X,
     [0X8D] = &STA_Abs,
     [0X9D] = &STA_Abs_X,
-    [0X9D] = &STA_Abs_X,
+    [0X99] = &STA_Abs_Y,
     [0X81] = &STA_Ind_X,
     [0X91] = &STA_Ind_Y,
 

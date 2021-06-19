@@ -7,7 +7,7 @@ struct CPU cpu; // Global CPU instance, everything is 0 by default
 void init(uint32_t mem_size) {
     cpu.mem_size = mem_size - 1;
     cpu.mem = malloc(mem_size);
-    memset(cpu.mem, 0, mem_size);
+    memset(cpu.mem, 0, mem_size + 1);
     cpu.program_counter = 0X600;
     cpu.stack_ptr = 0XFF;
 }
@@ -20,7 +20,7 @@ void reset() {
 void shutdown() {
     free(cpu.mem);
 
-    cpu.program_counter = 0;;
+    cpu.program_counter = 0;
     cpu.stack_ptr = 0;
     cpu.acc = 0;
     cpu.x = 0;
