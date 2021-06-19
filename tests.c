@@ -78,65 +78,6 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("LDA_Ind_Y with Carry sets value to Acc", cpu.acc, 0X13);
 
-    // STA
-
-    reset();
-    setOpByteArg(0X85, 0X02);
-    cpu.acc = 0X21;
-    tick();
-    is_eql("STA_Zero sets Acc value to mem addr", cpu.mem[0X02], 0X21);
-
-    reset();
-    setOpByteArg(0X95, 0X03);
-    cpu.acc = 0X22;
-    cpu.x = 1;
-    tick();
-    is_eql("STA_Zero_X sets Acc value to mem addr", cpu.mem[0X04], 0X22);
-
-    reset();
-    setOpWordArg(0X8D, 0X02, 0X0C);
-    cpu.acc = 0X23;
-    tick();
-    is_eql("STA_Abs sets Acc value to mem addr", cpu.mem[0X0C02], 0X23);
-
-    reset();
-    setOpWordArg(0X9D, 0X02, 0X0C);
-    cpu.acc = 0X24;
-    cpu.x = 1;
-    tick();
-    is_eql("STA_Abs_X sets Acc value to mem addr", cpu.mem[0X0C03], 0X24);
-
-    reset();
-    setOpWordArg(0X99, 0X02, 0X0F);
-    cpu.acc = 0X25;
-    cpu.y = 2;
-    tick();
-    is_eql("STA_Abs_Y sets Acc value to mem addr", cpu.mem[0X0F04], 0X25);
-
-    reset();
-    setOpByteArg(0X81, 0X01);
-    setMemWord(0X02, 0X25, 0X0F);
-    cpu.acc = 0XA1;
-    cpu.x = 1;
-    tick();
-    is_eql("STA_Ind_X sets Acc value to mem addr", cpu.mem[0X0F25], 0XA1);
-
-    reset();
-    setOpByteArg(0X91, 0X01);
-    setMemWord(0X01, 0X88, 0X07);
-    cpu.acc = 0XA3;
-    cpu.y = 5;
-    tick();
-    is_eql("STA_Ind_Y without Carry sets Acc value to mem addr", cpu.mem[0X078D], 0XA3);
-
-    reset();
-    setOpByteArg(0X91, 0X01);
-    setMemWord(0X01, 0XFE, 0X01);
-    cpu.acc = 0XA4;
-    cpu.y = 3;
-    tick();
-    is_eql("STA_Ind_Y with Carry sets Acc value to mem addr", cpu.mem[0X0201], 0XA4);
-
     // LDX
 
     setOpByteArg(0XA2, 0X26);
@@ -201,6 +142,65 @@ int main(int argc, char argv[]) {
     cpu.x = 1;
     tick();
     is_eql("LDY_Abs_X sets value to Y", cpu.y, 0X32);
+
+    // STA
+
+    reset();
+    setOpByteArg(0X85, 0X02);
+    cpu.acc = 0X21;
+    tick();
+    is_eql("STA_Zero sets Acc value to mem addr", cpu.mem[0X02], 0X21);
+
+    reset();
+    setOpByteArg(0X95, 0X03);
+    cpu.acc = 0X22;
+    cpu.x = 1;
+    tick();
+    is_eql("STA_Zero_X sets Acc value to mem addr", cpu.mem[0X04], 0X22);
+
+    reset();
+    setOpWordArg(0X8D, 0X02, 0X0C);
+    cpu.acc = 0X23;
+    tick();
+    is_eql("STA_Abs sets Acc value to mem addr", cpu.mem[0X0C02], 0X23);
+
+    reset();
+    setOpWordArg(0X9D, 0X02, 0X0C);
+    cpu.acc = 0X24;
+    cpu.x = 1;
+    tick();
+    is_eql("STA_Abs_X sets Acc value to mem addr", cpu.mem[0X0C03], 0X24);
+
+    reset();
+    setOpWordArg(0X99, 0X02, 0X0F);
+    cpu.acc = 0X25;
+    cpu.y = 2;
+    tick();
+    is_eql("STA_Abs_Y sets Acc value to mem addr", cpu.mem[0X0F04], 0X25);
+
+    reset();
+    setOpByteArg(0X81, 0X01);
+    setMemWord(0X02, 0X25, 0X0F);
+    cpu.acc = 0XA1;
+    cpu.x = 1;
+    tick();
+    is_eql("STA_Ind_X sets Acc value to mem addr", cpu.mem[0X0F25], 0XA1);
+
+    reset();
+    setOpByteArg(0X91, 0X01);
+    setMemWord(0X01, 0X88, 0X07);
+    cpu.acc = 0XA3;
+    cpu.y = 5;
+    tick();
+    is_eql("STA_Ind_Y without Carry sets Acc value to mem addr", cpu.mem[0X078D], 0XA3);
+
+    reset();
+    setOpByteArg(0X91, 0X01);
+    setMemWord(0X01, 0XFE, 0X01);
+    cpu.acc = 0XA4;
+    cpu.y = 3;
+    tick();
+    is_eql("STA_Ind_Y with Carry sets Acc value to mem addr", cpu.mem[0X0201], 0XA4);
 
     // LSR
 
