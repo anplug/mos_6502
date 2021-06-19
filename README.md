@@ -1,1 +1,1 @@
-Playing with emulating MOS 6502
+Playing with MOS 6502 emulation.

@@ -92,21 +92,6 @@ void memDump(word mem_addr, byte bytes) {
     }
 }
 
-void checkState() {
-    if (cpu.acc == 0) cpu.zero = 1;
-    if (cpu.acc & 128) cpu.negative = 1;
-}
-
-byte loadByteArg() {
-    return cpu.mem[cpu.program_counter + 1];
-}
-
-word loadWordArg() {
-    byte arg1 = cpu.mem[cpu.program_counter + 2];
-    byte arg2 = cpu.mem[cpu.program_counter + 1];
-    return ((word)arg1 << 8) | (word)arg2;
-}
-
 void execute() {
     memDump(cpu.program_counter, 8);
     getchar();

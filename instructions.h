@@ -39,6 +39,16 @@
     byte arg = loadByteArg(); \
     printf(#ins " ($%.2X), Y\n", arg);
 
+byte loadByteArg() {
+    return cpu.mem[cpu.program_counter + 1];
+}
+
+word loadWordArg() {
+    byte arg1 = cpu.mem[cpu.program_counter + 2];
+    byte arg2 = cpu.mem[cpu.program_counter + 1];
+    return ((word)arg1 << 8) | (word)arg2;
+}
+
 word getIndirectIndexedAddress(byte arg) {
     byte addr_low = cpu.mem[arg] + cpu.y;
     byte carry = addr_low < cpu.y ? 1 : 0;
@@ -50,6 +60,11 @@ word getIndexedIndirectAddress(byte arg) {
     byte addr_low = cpu.mem[arg + cpu.x];
     byte addr_high = cpu.mem[arg + cpu.x + 1];
     return ((word)addr_high << 8) | (word)addr_low;
+}
+
+void checkState() {
+    if (cpu.acc == 0) cpu.zero = 1;
+    if (cpu.acc & 128) cpu.negative = 1;
 }
 
 void LDA_Imediate() {
@@ -178,6 +193,8 @@ void LDY_Abs_X() {
     checkState();
 }
 
+// STA
+
 void STA_Zero() {
     ZERO_PAGE(STA);
     cpu.mem[arg] = cpu.acc;
@@ -212,15 +229,15 @@ void STA_Ind_X() {
     INDIRECT_X(STA);
     cpu.mem[getIndexedIndirectAddress(arg)] = cpu.acc;
     cpu.program_counter += 2;
-    checkState();
 }
 
 void STA_Ind_Y() {
     INDIRECT_Y(STA);
     cpu.mem[getIndirectIndexedAddress(arg)] = cpu.acc;
     cpu.program_counter += 2;
-    checkState();
 }
+
+// STX
 
 void STX_Zero() {
     ZERO_PAGE(STA);
@@ -239,6 +256,8 @@ void STX_Abs() {
     cpu.mem[arg] = cpu.x;
     cpu.program_counter += 3;
 }
+
+// STY
 
 void STY_Zero() {
     ZERO_PAGE(STA);
