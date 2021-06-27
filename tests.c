@@ -26,7 +26,7 @@ int main(int argc, char argv[]) {
 
     // ADC
 
-    setOpByteArg(0X69, 14);
+    setOpByteArg(0x69, 14);
     cpu.acc = 15;
     tick();
     is_eql("ADC_Imediate add values without carry", cpu.acc, 29);
@@ -34,7 +34,7 @@ int main(int argc, char argv[]) {
     is_eql("carry == 0", cpu.carry, 0);
 
     reset();
-    setOpByteArg(0X69, 14);
+    setOpByteArg(0x69, 14);
     cpu.acc = 15;
     cpu.carry = 1;
     tick();
@@ -43,7 +43,7 @@ int main(int argc, char argv[]) {
     is_eql("carry == 0", cpu.carry, 0);
 
     reset();
-    setOpByteArg(0X69, 0XFF);
+    setOpByteArg(0x69, 0xFF);
     cpu.acc = 2;
     cpu.carry = 1;
     tick();
@@ -52,7 +52,7 @@ int main(int argc, char argv[]) {
     is_eql("carry == 1", cpu.carry, 1);
 
     reset();
-    setOpByteArg(0X69, 127);
+    setOpByteArg(0x69, 127);
     cpu.acc = 25;
     tick();
     is_eql("ADC_Imediate add 2 positive values without carry and changes sign", cpu.acc, 152);
@@ -61,7 +61,7 @@ int main(int argc, char argv[]) {
     is_eql("negative == 1", cpu.negative, 1);
 
     reset();
-    setOpByteArg(0X69, -128);
+    setOpByteArg(0x69, -128);
     cpu.acc = -2;
     tick();
     is_eql("ADC_Imediate add 2 negative values without carry and changes sign", cpu.acc, 126); // -128
@@ -70,56 +70,56 @@ int main(int argc, char argv[]) {
     is_eql("carry == 1", cpu.carry, 1);
 
     reset();
-    setOpByteArg(0X65, 0X0F);
-    setMemByte(0X0F, 25);
+    setOpByteArg(0x65, 0x0F);
+    setMemByte(0x0F, 25);
     cpu.acc = 15;
     tick();
     is_eql("ADC_Zero add values without carry", cpu.acc, 40);
 
     reset();
-    setOpByteArg(0X75, 0X0A);
-    setMemByte(0X0C, 26);
+    setOpByteArg(0x75, 0x0A);
+    setMemByte(0x0C, 26);
     cpu.acc = 15;
     cpu.x = 2;
     tick();
     is_eql("ADC_Zero_X add values without carry", cpu.acc, 41);
 
     reset();
-    setOpWordArg(0X6D, 0X2A, 0X01);
-    setMemByte(0X012A, 27);
+    setOpWordArg(0x6D, 0x2A, 0x01);
+    setMemByte(0x012A, 27);
     cpu.acc = 15;
     tick();
     is_eql("ADC_Abs add values without carry", cpu.acc, 42);
 
     reset();
-    setOpWordArg(0X7D, 0X2A, 0X01);
-    setMemByte(0X012D, 30);
+    setOpWordArg(0x7D, 0x2A, 0x01);
+    setMemByte(0x012D, 30);
     cpu.acc = 15;
     cpu.x = 3;
     tick();
     is_eql("ADC_Abs_X add values without carry", cpu.acc, 45);
 
     reset();
-    setOpWordArg(0X79, 0X14, 0X01);
-    setMemByte(0X0117, 31);
+    setOpWordArg(0x79, 0x14, 0x01);
+    setMemByte(0x0117, 31);
     cpu.acc = 15;
     cpu.y = 3;
     tick();
     is_eql("ADC_Abs_Y add values without carry", cpu.acc, 46);
 
     reset();
-    setOpByteArg(0X61, 0X01);
-    setMemWord(0X03, 0XC1, 0X06);
-    setMemByte(0X06C1, 14);
+    setOpByteArg(0x61, 0x01);
+    setMemWord(0x03, 0xC1, 0x06);
+    setMemByte(0x06C1, 14);
     cpu.acc = 15;
     cpu.x = 2;
     tick();
     is_eql("ADC_Ind_X add values without carry", cpu.acc, 29);
 
     reset();
-    setOpByteArg(0X71, 0X02);
-    setMemWord(0X02, 0XC1, 0X06);
-    setMemByte(0X06C5, 18);
+    setOpByteArg(0x71, 0x02);
+    setMemWord(0x02, 0xC1, 0x06);
+    setMemByte(0x06C5, 18);
     cpu.acc = 15;
     cpu.y = 4;
     tick();
@@ -131,67 +131,67 @@ int main(int argc, char argv[]) {
     // 01110001 = 0x71
     // 00010001 = 0x11
 
-    byte and_arg_1 = 0X93;
-    byte and_arg_2 = 0X71;
-    byte and_res = 0X11;
+    byte and_arg_1 = 0x93;
+    byte and_arg_2 = 0x71;
+    byte and_res = 0x11;
 
     reset();
-    setOpByteArg(0X29, and_arg_1);
+    setOpByteArg(0x29, and_arg_1);
     cpu.acc = and_arg_2;
     tick();
     is_eql("AND_Imediate acc & val", cpu.acc, and_res);
 
     reset();
-    setOpByteArg(0X25, 0X0A);
-    setMemByte(0X0A, and_arg_1);
+    setOpByteArg(0x25, 0x0A);
+    setMemByte(0x0A, and_arg_1);
     cpu.acc = and_arg_2;
     tick();
     is_eql("AND_Zero acc & val", cpu.acc, and_res);
 
     reset();
-    setOpByteArg(0X35, 0X0A);
-    setMemByte(0X0C, and_arg_2);
+    setOpByteArg(0x35, 0x0A);
+    setMemByte(0x0C, and_arg_2);
     cpu.acc = and_arg_1;
     cpu.x = 2;
     tick();
     is_eql("AND_Zero_X acc & val", cpu.acc, and_res);
 
     reset();
-    setOpWordArg(0X2D, 0X2A, 0X01);
-    setMemByte(0X012A, and_arg_1);
+    setOpWordArg(0x2D, 0x2A, 0x01);
+    setMemByte(0x012A, and_arg_1);
     cpu.acc = and_arg_2;
     tick();
     is_eql("AND_Abs acc & val", cpu.acc, and_res);
 
     reset();
-    setOpWordArg(0X3D, 0X2A, 0X01);
-    setMemByte(0X012D, and_arg_1);
+    setOpWordArg(0x3D, 0x2A, 0x01);
+    setMemByte(0x012D, and_arg_1);
     cpu.acc = and_arg_2;
     cpu.x = 3;
     tick();
     is_eql("AND_Abs_X acc & val", cpu.acc, and_res);
 
     reset();
-    setOpWordArg(0X39, 0X14, 0X01);
-    setMemByte(0X0117, and_arg_1);
+    setOpWordArg(0x39, 0x14, 0x01);
+    setMemByte(0x0117, and_arg_1);
     cpu.acc = and_arg_2;
     cpu.y = 3;
     tick();
     is_eql("AND_Abs_Y acc & val", cpu.acc, and_res);
 
     reset();
-    setOpByteArg(0X21, 0X01);
-    setMemWord(0X03, 0XC1, 0X06);
-    setMemByte(0X06C1, and_arg_2);
+    setOpByteArg(0x21, 0x01);
+    setMemWord(0x03, 0xC1, 0x06);
+    setMemByte(0x06C1, and_arg_2);
     cpu.acc = and_arg_1;
     cpu.x = 2;
     tick();
     is_eql("AND_Ind_X acc & val", cpu.acc, and_res);
 
     reset();
-    setOpByteArg(0X31, 0X02);
-    setMemWord(0X02, 0XC1, 0X06);
-    setMemByte(0X06C5, and_arg_1);
+    setOpByteArg(0x31, 0x02);
+    setMemWord(0x02, 0xC1, 0x06);
+    setMemByte(0x06C5, and_arg_1);
     cpu.acc = and_arg_2;
     cpu.y = 4;
     tick();
@@ -200,136 +200,136 @@ int main(int argc, char argv[]) {
     // LDA
 
     reset();
-    setOpByteArg(0XA9, 0X26);
+    setOpByteArg(0xA9, 0x26);
     tick();
-    is_eql("LDA_Imediate sets value to Acc", cpu.acc, 0X26);
+    is_eql("LDA_Imediate sets value to Acc", cpu.acc, 0x26);
 
     reset();
-    setOpByteArg(0XA5, 0X02);
-    setMemByte(0X02, 0X27);
+    setOpByteArg(0xA5, 0x02);
+    setMemByte(0x02, 0x27);
     tick();
-    is_eql("LDA_Zero sets value to Acc", cpu.acc, 0X27);
+    is_eql("LDA_Zero sets value to Acc", cpu.acc, 0x27);
 
     reset();
-    setOpByteArg(0XB5, 0X03);
-    setMemByte(0X04, 0X28);
+    setOpByteArg(0xB5, 0x03);
+    setMemByte(0x04, 0x28);
     cpu.x = 1;
     tick();
-    is_eql("LDA_Zero_X sets value to Acc", cpu.acc, 0X28);
+    is_eql("LDA_Zero_X sets value to Acc", cpu.acc, 0x28);
 
     reset();
-    setOpWordArg(0XAD, 0X02, 0X08);
-    setMemByte(0X0802, 0X29);
+    setOpWordArg(0xAD, 0x02, 0x08);
+    setMemByte(0x0802, 0x29);
     tick();
-    is_eql("LDA_Abs sets value to Acc", cpu.acc, 0X29);
+    is_eql("LDA_Abs sets value to Acc", cpu.acc, 0x29);
 
     reset();
-    setOpWordArg(0XBD, 0X02, 0X0A);
-    setMemByte(0X0A03, 0X31);
+    setOpWordArg(0xBD, 0x02, 0x0A);
+    setMemByte(0x0A03, 0x31);
     cpu.x = 1;
     tick();
-    is_eql("LDA_Abs_X sets value to Acc", cpu.acc, 0X31);
+    is_eql("LDA_Abs_X sets value to Acc", cpu.acc, 0x31);
 
     reset();
-    setOpWordArg(0XB9, 0X02, 0X0F);
-    setMemByte(0X0F03, 0X32);
+    setOpWordArg(0xB9, 0x02, 0x0F);
+    setMemByte(0x0F03, 0x32);
     cpu.y = 1;
     tick();
-    is_eql("LDA_Abs_Y sets value to Acc", cpu.acc, 0X32);
+    is_eql("LDA_Abs_Y sets value to Acc", cpu.acc, 0x32);
 
     reset();
-    setOpByteArg(0XA1, 0X01);
-    setMemWord(0X02, 0XA6, 0X05);
-    setMemByte(0X05A6, 0X11);
+    setOpByteArg(0xA1, 0x01);
+    setMemWord(0x02, 0xA6, 0x05);
+    setMemByte(0x05A6, 0x11);
     cpu.x = 1;
     tick();
-    is_eql("LDA_Ind_X sets value to Acc", cpu.acc, 0X11);
+    is_eql("LDA_Ind_X sets value to Acc", cpu.acc, 0x11);
 
     reset();
-    setOpByteArg(0XB1, 0X06);
-    setMemWord(0X06, 0X88, 0X07);
-    setMemByte(0X0789, 0X13);
-    cpu.y = 0X01;
+    setOpByteArg(0xB1, 0x06);
+    setMemWord(0x06, 0x88, 0x07);
+    setMemByte(0x0789, 0x13);
+    cpu.y = 0x01;
     tick();
-    is_eql("LDA_Ind_Y without Carry sets value to Acc", cpu.acc, 0X13);
+    is_eql("LDA_Ind_Y without Carry sets value to Acc", cpu.acc, 0x13);
 
     reset();
-    setOpByteArg(0XB1, 0X01);
-    setMemWord(0X01, 0XFD, 0XB9);
-    setMemByte(0XBA01, 0X13);
+    setOpByteArg(0xB1, 0x01);
+    setMemWord(0x01, 0xFD, 0xB9);
+    setMemByte(0xBA01, 0x13);
     cpu.y = 4;
     tick();
-    is_eql("LDA_Ind_Y with Carry sets value to Acc", cpu.acc, 0X13);
+    is_eql("LDA_Ind_Y with Carry sets value to Acc", cpu.acc, 0x13);
 
     // LDX
 
-    setOpByteArg(0XA2, 0X26);
+    setOpByteArg(0xA2, 0x26);
     tick();
-    is_eql("LDX_Imediate sets value to X", cpu.x, 0X26);
+    is_eql("LDX_Imediate sets value to X", cpu.x, 0x26);
 
     reset();
-    setOpByteArg(0XA6, 0X02);
-    setMemByte(0X02, 0X27);
+    setOpByteArg(0xA6, 0x02);
+    setMemByte(0x02, 0x27);
     tick();
-    is_eql("LDX_Zero sets value to X", cpu.x, 0X27);
+    is_eql("LDX_Zero sets value to X", cpu.x, 0x27);
 
     reset();
-    setOpByteArg(0XB6, 0X03);
-    setMemByte(0X04, 0X28);
+    setOpByteArg(0xB6, 0x03);
+    setMemByte(0x04, 0x28);
     cpu.y = 1;
     tick();
-    is_eql("LDX_Zero_Y sets value to X", cpu.x, 0X28);
+    is_eql("LDX_Zero_Y sets value to X", cpu.x, 0x28);
 
     reset();
-    setOpWordArg(0XAE, 0X02, 0X08);
-    setMemByte(0X0802, 0X29);
+    setOpWordArg(0xAE, 0x02, 0x08);
+    setMemByte(0x0802, 0x29);
     tick();
-    is_eql("LDX_Abs sets value to X", cpu.x, 0X29);
+    is_eql("LDX_Abs sets value to X", cpu.x, 0x29);
 
     reset();
-    setOpWordArg(0XBE, 0X02, 0X0F);
-    setMemByte(0X0F03, 0X32);
+    setOpWordArg(0xBE, 0x02, 0x0F);
+    setMemByte(0x0F03, 0x32);
     cpu.y = 1;
     tick();
-    is_eql("LDX_Abs_Y sets value to X", cpu.x, 0X32);
+    is_eql("LDX_Abs_Y sets value to X", cpu.x, 0x32);
 
     // LDY
 
     reset();
-    setOpByteArg(0XA0, 0X26);
+    setOpByteArg(0xA0, 0x26);
     tick();
-    is_eql("LDY_Imediate sets value to Y", cpu.y, 0X26);
+    is_eql("LDY_Imediate sets value to Y", cpu.y, 0x26);
 
     reset();
-    setOpByteArg(0XA4, 0X02);
-    setMemByte(0X02, 0X27);
+    setOpByteArg(0xA4, 0x02);
+    setMemByte(0x02, 0x27);
     tick();
-    is_eql("LDY_Zero sets value to Y", cpu.y, 0X27);
+    is_eql("LDY_Zero sets value to Y", cpu.y, 0x27);
 
     reset();
-    setOpByteArg(0XB4, 0X03);
-    setMemByte(0X04, 0X28);
+    setOpByteArg(0xB4, 0x03);
+    setMemByte(0x04, 0x28);
     cpu.x = 1;
     tick();
-    is_eql("LDY_Zero_X sets value to Y", cpu.y, 0X28);
+    is_eql("LDY_Zero_X sets value to Y", cpu.y, 0x28);
 
     reset();
-    setOpWordArg(0XAC, 0X02, 0X08);
-    setMemByte(0X0802, 0X29);
+    setOpWordArg(0xAC, 0x02, 0x08);
+    setMemByte(0x0802, 0x29);
     tick();
-    is_eql("LDY_Abs sets value to Y", cpu.y, 0X29);
+    is_eql("LDY_Abs sets value to Y", cpu.y, 0x29);
 
     reset();
-    setOpWordArg(0XBC, 0X02, 0X0F);
-    setMemByte(0X0F03, 0X32);
+    setOpWordArg(0xBC, 0x02, 0x0F);
+    setMemByte(0x0F03, 0x32);
     cpu.x = 1;
     tick();
-    is_eql("LDY_Abs_X sets value to Y", cpu.y, 0X32);
+    is_eql("LDY_Abs_X sets value to Y", cpu.y, 0x32);
 
     // LSR
 
     reset();
-    setOp(0X4A);
+    setOp(0x4A);
     cpu.acc = 15;
     tick();
     is_eql("LSR_Acc shifts -> Acc value", cpu.acc, 7);
@@ -341,67 +341,67 @@ int main(int argc, char argv[]) {
     // 01010101 = 0x55
     // 11010111 = 0xD7
 
-    byte ora_arg_1 = 0X87;
-    byte ora_arg_2 = 0X55;
-    byte ora_res = 0XD7;
+    byte ora_arg_1 = 0x87;
+    byte ora_arg_2 = 0x55;
+    byte ora_res = 0xD7;
 
     reset();
-    setOpByteArg(0X09, ora_arg_1);
+    setOpByteArg(0x09, ora_arg_1);
     cpu.acc = ora_arg_2;
     tick();
     is_eql("ORA_Imediate acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpByteArg(0X05, 0X0A);
-    setMemByte(0X0A, ora_arg_1);
+    setOpByteArg(0x05, 0x0A);
+    setMemByte(0x0A, ora_arg_1);
     cpu.acc = ora_arg_2;
     tick();
     is_eql("ORA_Zero acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpByteArg(0X15, 0X0A);
-    setMemByte(0X0C, ora_arg_2);
+    setOpByteArg(0x15, 0x0A);
+    setMemByte(0x0C, ora_arg_2);
     cpu.acc = ora_arg_1;
     cpu.x = 2;
     tick();
     is_eql("ORA_Zero_X acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpWordArg(0X0D, 0X2A, 0X01);
-    setMemByte(0X012A, ora_arg_1);
+    setOpWordArg(0x0D, 0x2A, 0x01);
+    setMemByte(0x012A, ora_arg_1);
     cpu.acc = ora_arg_2;
     tick();
     is_eql("ORA_Abs acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpWordArg(0X1D, 0X2A, 0X01);
-    setMemByte(0X012D, ora_arg_1);
+    setOpWordArg(0x1D, 0x2A, 0x01);
+    setMemByte(0x012D, ora_arg_1);
     cpu.acc = ora_arg_2;
     cpu.x = 3;
     tick();
     is_eql("ORA_Abs_X acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpWordArg(0X19, 0X14, 0X01);
-    setMemByte(0X0117, ora_arg_1);
+    setOpWordArg(0x19, 0x14, 0x01);
+    setMemByte(0x0117, ora_arg_1);
     cpu.acc = ora_arg_2;
     cpu.y = 3;
     tick();
     is_eql("ORA_Abs_Y acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpByteArg(0X01, 0X01);
-    setMemWord(0X03, 0XC1, 0X06);
-    setMemByte(0X06C1, ora_arg_2);
+    setOpByteArg(0x01, 0x01);
+    setMemWord(0x03, 0xC1, 0x06);
+    setMemByte(0x06C1, ora_arg_2);
     cpu.acc = ora_arg_1;
     cpu.x = 2;
     tick();
     is_eql("ORA_Ind_X acc | val", cpu.acc, ora_res);
 
     reset();
-    setOpByteArg(0X11, 0X02);
-    setMemWord(0X02, 0XC1, 0X06);
-    setMemByte(0X06C5, ora_arg_1);
+    setOpByteArg(0x11, 0x02);
+    setMemWord(0x02, 0xC1, 0x06);
+    setMemByte(0x06C5, ora_arg_1);
     cpu.acc = ora_arg_2;
     cpu.y = 4;
     tick();
@@ -410,103 +410,103 @@ int main(int argc, char argv[]) {
     // STA
 
     reset();
-    setOpByteArg(0X85, 0X02);
-    cpu.acc = 0X21;
+    setOpByteArg(0x85, 0x02);
+    cpu.acc = 0x21;
     tick();
-    is_eql("STA_Zero sets Acc value to mem addr", cpu.mem[0X02], 0X21);
+    is_eql("STA_Zero sets Acc value to mem addr", cpu.mem[0x02], 0x21);
 
     reset();
-    setOpByteArg(0X95, 0X03);
-    cpu.acc = 0X22;
+    setOpByteArg(0x95, 0x03);
+    cpu.acc = 0x22;
     cpu.x = 1;
     tick();
-    is_eql("STA_Zero_X sets Acc value to mem addr", cpu.mem[0X04], 0X22);
+    is_eql("STA_Zero_X sets Acc value to mem addr", cpu.mem[0x04], 0x22);
 
     reset();
-    setOpWordArg(0X8D, 0X02, 0X0C);
-    cpu.acc = 0X23;
+    setOpWordArg(0x8D, 0x02, 0x0C);
+    cpu.acc = 0x23;
     tick();
-    is_eql("STA_Abs sets Acc value to mem addr", cpu.mem[0X0C02], 0X23);
+    is_eql("STA_Abs sets Acc value to mem addr", cpu.mem[0x0C02], 0x23);
 
     reset();
-    setOpWordArg(0X9D, 0X02, 0X0C);
-    cpu.acc = 0X24;
+    setOpWordArg(0x9D, 0x02, 0x0C);
+    cpu.acc = 0x24;
     cpu.x = 1;
     tick();
-    is_eql("STA_Abs_X sets Acc value to mem addr", cpu.mem[0X0C03], 0X24);
+    is_eql("STA_Abs_X sets Acc value to mem addr", cpu.mem[0x0C03], 0x24);
 
     reset();
-    setOpWordArg(0X99, 0X02, 0X0F);
-    cpu.acc = 0X25;
+    setOpWordArg(0x99, 0x02, 0x0F);
+    cpu.acc = 0x25;
     cpu.y = 2;
     tick();
-    is_eql("STA_Abs_Y sets Acc value to mem addr", cpu.mem[0X0F04], 0X25);
+    is_eql("STA_Abs_Y sets Acc value to mem addr", cpu.mem[0x0F04], 0x25);
 
     reset();
-    setOpByteArg(0X81, 0X01);
-    setMemWord(0X02, 0X25, 0X0F);
-    cpu.acc = 0XA1;
+    setOpByteArg(0x81, 0x01);
+    setMemWord(0x02, 0x25, 0x0F);
+    cpu.acc = 0xA1;
     cpu.x = 1;
     tick();
-    is_eql("STA_Ind_X sets Acc value to mem addr", cpu.mem[0X0F25], 0XA1);
+    is_eql("STA_Ind_X sets Acc value to mem addr", cpu.mem[0x0F25], 0xA1);
 
     reset();
-    setOpByteArg(0X91, 0X01);
-    setMemWord(0X01, 0X88, 0X07);
-    cpu.acc = 0XA3;
+    setOpByteArg(0x91, 0x01);
+    setMemWord(0x01, 0x88, 0x07);
+    cpu.acc = 0xA3;
     cpu.y = 5;
     tick();
-    is_eql("STA_Ind_Y without Carry sets Acc value to mem addr", cpu.mem[0X078D], 0XA3);
+    is_eql("STA_Ind_Y without Carry sets Acc value to mem addr", cpu.mem[0x078D], 0xA3);
 
     reset();
-    setOpByteArg(0X91, 0X01);
-    setMemWord(0X01, 0XFE, 0X01);
-    cpu.acc = 0XA4;
+    setOpByteArg(0x91, 0x01);
+    setMemWord(0x01, 0xFE, 0x01);
+    cpu.acc = 0xA4;
     cpu.y = 3;
     tick();
-    is_eql("STA_Ind_Y with Carry sets Acc value to mem addr", cpu.mem[0X0201], 0XA4);
+    is_eql("STA_Ind_Y with Carry sets Acc value to mem addr", cpu.mem[0x0201], 0xA4);
 
     // STX
 
     reset();
-    setOpByteArg(0X86, 0X02);
-    cpu.x = 0X21;
+    setOpByteArg(0x86, 0x02);
+    cpu.x = 0x21;
     tick();
-    is_eql("STX_Zero sets X value to mem addr", cpu.mem[0X02], 0X21);
+    is_eql("STX_Zero sets X value to mem addr", cpu.mem[0x02], 0x21);
 
     reset();
-    setOpByteArg(0X96, 0X03);
-    cpu.x = 0X22;
+    setOpByteArg(0x96, 0x03);
+    cpu.x = 0x22;
     cpu.y = 1;
     tick();
-    is_eql("STX_Zero_Y sets X value to mem addr", cpu.mem[0X04], 0X22);
+    is_eql("STX_Zero_Y sets X value to mem addr", cpu.mem[0x04], 0x22);
 
     reset();
-    setOpWordArg(0X8E, 0X02, 0X0C);
-    cpu.x = 0X23;
+    setOpWordArg(0x8E, 0x02, 0x0C);
+    cpu.x = 0x23;
     tick();
-    is_eql("STX_Abs sets X value to mem addr", cpu.mem[0X0C02], 0X23);
+    is_eql("STX_Abs sets X value to mem addr", cpu.mem[0x0C02], 0x23);
 
     // STY
 
     reset();
-    setOpByteArg(0X84, 0X02);
-    cpu.y = 0X21;
+    setOpByteArg(0x84, 0x02);
+    cpu.y = 0x21;
     tick();
-    is_eql("STY_Zero sets Y value to mem addr", cpu.mem[0X02], 0X21);
+    is_eql("STY_Zero sets Y value to mem addr", cpu.mem[0x02], 0x21);
 
     reset();
-    setOpByteArg(0X94, 0X03);
-    cpu.y = 0X22;
+    setOpByteArg(0x94, 0x03);
+    cpu.y = 0x22;
     cpu.x = 1;
     tick();
-    is_eql("STY_Zero_X sets Y value to mem addr", cpu.mem[0X04], 0X22);
+    is_eql("STY_Zero_X sets Y value to mem addr", cpu.mem[0x04], 0x22);
 
     reset();
-    setOpWordArg(0X8C, 0X02, 0X0C);
-    cpu.y = 0X23;
+    setOpWordArg(0x8C, 0x02, 0x0C);
+    cpu.y = 0x23;
     tick();
-    is_eql("STY_Abs sets Y value to mem addr", cpu.mem[0X0C02], 0X23);
+    is_eql("STY_Abs sets Y value to mem addr", cpu.mem[0x0C02], 0x23);
 
     shutdown();
     return 0;
