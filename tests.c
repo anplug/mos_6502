@@ -24,8 +24,110 @@ void is_eql(const char* str, word res, word expected) {
 int main(int argc, char argv[]) {
     init(4 * 1024);
 
+    // ADC
+
+    setOpByteArg(0X69, 14);
+    cpu.acc = 15;
+    tick();
+    is_eql("ADC_Imediate add values without carry", cpu.acc, 29);
+    is_eql("overflow == 0", cpu.overflow, 0);
+    is_eql("carry == 0", cpu.carry, 0);
+
+    reset();
+    setOpByteArg(0X69, 14);
+    cpu.acc = 15;
+    cpu.carry = 1;
+    tick();
+    is_eql("ADC_Imediate add values with carry", cpu.acc, 30);
+    is_eql("overflow == 0", cpu.overflow, 0);
+    is_eql("carry == 0", cpu.carry, 0);
+
+    reset();
+    setOpByteArg(0X69, 0XFF);
+    cpu.acc = 2;
+    cpu.carry = 1;
+    tick();
+    is_eql("ADC_Imediate add values with carry and overflows register", cpu.acc, 2);
+    is_eql("overflow == 0", cpu.overflow, 0);
+    is_eql("carry == 1", cpu.carry, 1);
+
+    reset();
+    setOpByteArg(0X69, 127);
+    cpu.acc = 25;
+    tick();
+    is_eql("ADC_Imediate add 2 positive values without carry and changes sign", cpu.acc, 152);
+    is_eql("overflow == 1", cpu.overflow, 1);
+    is_eql("carry == 0", cpu.carry, 0);
+    is_eql("negative == 1", cpu.negative, 1);
+
+    reset();
+    setOpByteArg(0X69, -128);
+    cpu.acc = -2;
+    tick();
+    is_eql("ADC_Imediate add 2 negative values without carry and changes sign", cpu.acc, 126); // -128
+    is_eql("negative == 0", cpu.negative, 0);
+    is_eql("overflow == 1", cpu.overflow, 1);
+    is_eql("carry == 1", cpu.carry, 1);
+
+    reset();
+    setOpByteArg(0X65, 0X0F);
+    setMemByte(0X0F, 25);
+    cpu.acc = 15;
+    tick();
+    is_eql("ADC_Zero add values without carry", cpu.acc, 40);
+
+    reset();
+    setOpByteArg(0X75, 0X0A);
+    setMemByte(0X0C, 26);
+    cpu.acc = 15;
+    cpu.x = 2;
+    tick();
+    is_eql("ADC_Zero_X add values without carry", cpu.acc, 41);
+
+    reset();
+    setOpWordArg(0X6D, 0X2A, 0X01);
+    setMemByte(0X012A, 27);
+    cpu.acc = 15;
+    tick();
+    is_eql("ADC_Abs add values without carry", cpu.acc, 42);
+
+    reset();
+    setOpWordArg(0X7D, 0X2A, 0X01);
+    setMemByte(0X012D, 30);
+    cpu.acc = 15;
+    cpu.x = 3;
+    tick();
+    is_eql("ADC_Abs_X add values without carry", cpu.acc, 45);
+
+    reset();
+    setOpWordArg(0X79, 0X14, 0X01);
+    setMemByte(0X0117, 31);
+    cpu.acc = 15;
+    cpu.y = 3;
+    tick();
+    is_eql("ADC_Abs_Y add values without carry", cpu.acc, 46);
+
+    reset();
+    setOpByteArg(0X61, 0X01);
+    setMemWord(0X03, 0XC1, 0X06);
+    setMemByte(0X06C1, 14);
+    cpu.acc = 15;
+    cpu.x = 2;
+    tick();
+    is_eql("ADC_Ind_X add values without carry", cpu.acc, 29);
+
+    reset();
+    setOpByteArg(0X71, 0X02);
+    setMemWord(0X02, 0XC1, 0X06);
+    setMemByte(0X06C5, 18);
+    cpu.acc = 15;
+    cpu.y = 4;
+    tick();
+    is_eql("ADC_Ind_Y add values without carry", cpu.acc, 33);
+
     // LDA
 
+    reset();
     setOpByteArg(0XA9, 0X26);
     tick();
     is_eql("LDA_Imediate sets value to Acc", cpu.acc, 0X26);

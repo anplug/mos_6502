@@ -39,6 +39,9 @@
     byte arg = loadByteArg(); \
     printf(#ins " ($%.2X), Y\n", arg);
 
+#define IS_NEG(val) (val & 128)
+#define IS_POS(val) !(val & 128)
+
 byte loadByteArg() {
     return cpu.mem[cpu.program_counter + 1];
 }
@@ -66,6 +69,81 @@ void checkState() {
     if (cpu.acc == 0) cpu.zero = 1;
     if (cpu.acc & 128) cpu.negative = 1;
 }
+
+// ADC
+
+void ADC(byte arg) {
+    byte acc_cache = cpu.acc;
+    if (cpu.decimal_mode == 0) {
+        cpu.acc += arg + cpu.carry;
+    } else {
+        // TODO: Not implemented yet
+    }
+
+    if (cpu.acc <= acc_cache) {
+        cpu.carry = 1;
+    } else {
+        cpu.carry = 0;
+    }
+
+    if ((IS_NEG(acc_cache) && IS_NEG(arg) && IS_POS(cpu.acc)) ||
+        (IS_POS(acc_cache) && IS_POS(arg) && IS_NEG(cpu.acc))) {
+        cpu.overflow = 1;
+    } else {
+        cpu.overflow = 0;
+    }
+    checkState();
+}
+
+void ADC_Imediate() {
+    IMEDIATE(ADC);
+    ADC(arg);
+    cpu.program_counter += 2;
+}
+
+void ADC_Zero() {
+    ZERO_PAGE(ADC);
+    ADC(cpu.mem[arg]);
+    cpu.program_counter += 2;
+}
+
+void ADC_Zero_X() {
+    ZERO_PAGE_X(ADC);
+    ADC(cpu.mem[arg + cpu.x]);
+    cpu.program_counter += 2;
+}
+
+void ADC_Abs() {
+    ABSOLUTE(ADC);
+    ADC(cpu.mem[arg]);
+    cpu.program_counter += 3;
+}
+
+void ADC_Abs_X() {
+    ABSOLUTE_X(ADC);
+    ADC(cpu.mem[arg + cpu.x]);
+    cpu.program_counter += 3;
+}
+
+void ADC_Abs_Y() {
+    ABSOLUTE_Y(ADC);
+    ADC(cpu.mem[arg + cpu.y]);
+    cpu.program_counter += 3;
+}
+
+void ADC_Ind_X() {
+    INDIRECT_X(ADC);
+    ADC(cpu.mem[getIndexedIndirectAddress(arg)]);
+    cpu.program_counter += 2;
+}
+
+void ADC_Ind_Y() {
+    INDIRECT_Y(ADC);
+    ADC(cpu.mem[getIndirectIndexedAddress(arg)]);
+    cpu.program_counter += 2;
+}
+
+// LDA
 
 void LDA_Imediate() {
     IMEDIATE(LDA);
@@ -123,6 +201,8 @@ void LDA_Ind_Y() {
     checkState();
 }
 
+// LDX
+
 void LDX_Imediate() {
     IMEDIATE(LDX);
     cpu.x = arg;
@@ -157,6 +237,8 @@ void LDX_Abs_Y() {
     cpu.program_counter += 3;
     checkState();
 }
+
+// LDY
 
 void LDY_Imediate() {
     IMEDIATE(LDY);
@@ -277,6 +359,8 @@ void STY_Abs() {
     cpu.program_counter += 3;
 }
 
+// LSR
+
 void LSR_Acc() {
     ACCUMULATOR(LSR);
     cpu.carry = cpu.acc & 1;
@@ -318,6 +402,15 @@ void LSR_Abs_X() {
 }
 
 inst_ptr_t inst_matrix[256] = {
+    [0X69] = &ADC_Imediate,
+    [0X65] = &ADC_Zero,
+    [0X75] = &ADC_Zero_X,
+    [0X6D] = &ADC_Abs,
+    [0X7D] = &ADC_Abs_X,
+    [0X79] = &ADC_Abs_Y,
+    [0X61] = &ADC_Ind_X,
+    [0X71] = &ADC_Ind_Y,
+
     [0XA9] = &LDA_Imediate,
     [0XA5] = &LDA_Zero,
     [0XB5] = &LDA_Zero_X,
