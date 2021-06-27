@@ -143,6 +143,56 @@ void ADC_Ind_Y() {
     cpu.program_counter += 2;
 }
 
+// AND
+
+void AND_Imediate() {
+    IMEDIATE(AND);
+    cpu.acc &= arg;
+    cpu.program_counter += 2;
+}
+
+void AND_Zero() {
+    ZERO_PAGE(AND);
+    cpu.acc &= cpu.mem[arg];
+    cpu.program_counter += 2;
+}
+
+void AND_Zero_X() {
+    ZERO_PAGE_X(AND);
+    cpu.acc &= cpu.mem[arg + cpu.x];
+    cpu.program_counter += 2;
+}
+
+void AND_Abs() {
+    ABSOLUTE(AND);
+    cpu.acc &= cpu.mem[arg];
+    cpu.program_counter += 3;
+}
+
+void AND_Abs_X() {
+    ABSOLUTE_X(AND);
+    cpu.acc &= cpu.mem[arg + cpu.x];
+    cpu.program_counter += 3;
+}
+
+void AND_Abs_Y() {
+    ABSOLUTE_Y(AND);
+    cpu.acc &= cpu.mem[arg + cpu.y];
+    cpu.program_counter += 3;
+}
+
+void AND_Ind_X() {
+    INDIRECT_X(AND);
+    cpu.acc &= cpu.mem[getIndexedIndirectAddress(arg)];
+    cpu.program_counter += 2;
+}
+
+void AND_Ind_Y() {
+    INDIRECT_Y(AND);
+    cpu.acc &= cpu.mem[getIndirectIndexedAddress(arg)];
+    cpu.program_counter += 2;
+}
+
 // LDA
 
 void LDA_Imediate() {
@@ -273,6 +323,56 @@ void LDY_Abs_X() {
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
     checkState();
+}
+
+// ORA
+
+void ORA_Imediate() {
+    IMEDIATE(ORA);
+    cpu.acc |= arg;
+    cpu.program_counter += 2;
+}
+
+void ORA_Zero() {
+    ZERO_PAGE(ORA);
+    cpu.acc |= cpu.mem[arg];
+    cpu.program_counter += 2;
+}
+
+void ORA_Zero_X() {
+    ZERO_PAGE_X(ORA);
+    cpu.acc |= cpu.mem[arg + cpu.x];
+    cpu.program_counter += 2;
+}
+
+void ORA_Abs() {
+    ABSOLUTE(ORA);
+    cpu.acc |= cpu.mem[arg];
+    cpu.program_counter += 3;
+}
+
+void ORA_Abs_X() {
+    ABSOLUTE_X(ORA);
+    cpu.acc |= cpu.mem[arg + cpu.x];
+    cpu.program_counter += 3;
+}
+
+void ORA_Abs_Y() {
+    ABSOLUTE_Y(ORA);
+    cpu.acc |= cpu.mem[arg + cpu.y];
+    cpu.program_counter += 3;
+}
+
+void ORA_Ind_X() {
+    INDIRECT_X(ORA);
+    cpu.acc |= cpu.mem[getIndexedIndirectAddress(arg)];
+    cpu.program_counter += 2;
+}
+
+void ORA_Ind_Y() {
+    INDIRECT_Y(ORA);
+    cpu.acc |= cpu.mem[getIndirectIndexedAddress(arg)];
+    cpu.program_counter += 2;
 }
 
 // STA
@@ -411,6 +511,15 @@ inst_ptr_t inst_matrix[256] = {
     [0X61] = &ADC_Ind_X,
     [0X71] = &ADC_Ind_Y,
 
+    [0X29] = &AND_Imediate,
+    [0X25] = &AND_Zero,
+    [0X35] = &AND_Zero_X,
+    [0X2D] = &AND_Abs,
+    [0X3D] = &AND_Abs_X,
+    [0X39] = &AND_Abs_Y,
+    [0X21] = &AND_Ind_X,
+    [0X31] = &AND_Ind_Y,
+
     [0XA9] = &LDA_Imediate,
     [0XA5] = &LDA_Zero,
     [0XB5] = &LDA_Zero_X,
@@ -432,6 +541,21 @@ inst_ptr_t inst_matrix[256] = {
     [0XAC] = &LDY_Abs,
     [0XBC] = &LDY_Abs_X,
 
+    [0X4A] = &LSR_Acc,
+    [0X46] = &LSR_Zero,
+    [0X56] = &LSR_Zero_X,
+    [0X4E] = &LSR_Abs,
+    [0X5E] = &LSR_Abs_X,
+
+    [0X09] = &ORA_Imediate,
+    [0X05] = &ORA_Zero,
+    [0X15] = &ORA_Zero_X,
+    [0X0D] = &ORA_Abs,
+    [0X1D] = &ORA_Abs_X,
+    [0X19] = &ORA_Abs_Y,
+    [0X01] = &ORA_Ind_X,
+    [0X11] = &ORA_Ind_Y,
+
     [0X85] = &STA_Zero,
     [0X95] = &STA_Zero_X,
     [0X8D] = &STA_Abs,
@@ -446,11 +570,5 @@ inst_ptr_t inst_matrix[256] = {
 
     [0X84] = &STY_Zero,
     [0X94] = &STY_Zero_X,
-    [0X8C] = &STY_Abs,
-
-    [0X4A] = &LSR_Acc,
-    [0X46] = &LSR_Zero,
-    [0X56] = &LSR_Zero_X,
-    [0X4E] = &LSR_Abs,
-    [0X5E] = &LSR_Abs_X
+    [0X8C] = &STY_Abs
 };

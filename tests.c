@@ -125,6 +125,78 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("ADC_Ind_Y add values without carry", cpu.acc, 33);
 
+    // AND
+
+    // 10010011 = 0x93
+    // 01110001 = 0x71
+    // 00010001 = 0x11
+
+    byte and_arg_1 = 0X93;
+    byte and_arg_2 = 0X71;
+    byte and_res = 0X11;
+
+    reset();
+    setOpByteArg(0X29, and_arg_1);
+    cpu.acc = and_arg_2;
+    tick();
+    is_eql("AND_Imediate acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpByteArg(0X25, 0X0A);
+    setMemByte(0X0A, and_arg_1);
+    cpu.acc = and_arg_2;
+    tick();
+    is_eql("AND_Zero acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpByteArg(0X35, 0X0A);
+    setMemByte(0X0C, and_arg_2);
+    cpu.acc = and_arg_1;
+    cpu.x = 2;
+    tick();
+    is_eql("AND_Zero_X acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpWordArg(0X2D, 0X2A, 0X01);
+    setMemByte(0X012A, and_arg_1);
+    cpu.acc = and_arg_2;
+    tick();
+    is_eql("AND_Abs acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpWordArg(0X3D, 0X2A, 0X01);
+    setMemByte(0X012D, and_arg_1);
+    cpu.acc = and_arg_2;
+    cpu.x = 3;
+    tick();
+    is_eql("AND_Abs_X acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpWordArg(0X39, 0X14, 0X01);
+    setMemByte(0X0117, and_arg_1);
+    cpu.acc = and_arg_2;
+    cpu.y = 3;
+    tick();
+    is_eql("AND_Abs_Y acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpByteArg(0X21, 0X01);
+    setMemWord(0X03, 0XC1, 0X06);
+    setMemByte(0X06C1, and_arg_2);
+    cpu.acc = and_arg_1;
+    cpu.x = 2;
+    tick();
+    is_eql("AND_Ind_X acc & val", cpu.acc, and_res);
+
+    reset();
+    setOpByteArg(0X31, 0X02);
+    setMemWord(0X02, 0XC1, 0X06);
+    setMemByte(0X06C5, and_arg_1);
+    cpu.acc = and_arg_2;
+    cpu.y = 4;
+    tick();
+    is_eql("AND_Ind_Y acc & val", cpu.acc, and_res);
+
     // LDA
 
     reset();
@@ -254,6 +326,87 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("LDY_Abs_X sets value to Y", cpu.y, 0X32);
 
+    // LSR
+
+    reset();
+    setOp(0X4A);
+    cpu.acc = 15;
+    tick();
+    is_eql("LSR_Acc shifts -> Acc value", cpu.acc, 7);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    // ORA
+
+    // 10000111 = 0x87
+    // 01010101 = 0x55
+    // 11010111 = 0xD7
+
+    byte ora_arg_1 = 0X87;
+    byte ora_arg_2 = 0X55;
+    byte ora_res = 0XD7;
+
+    reset();
+    setOpByteArg(0X09, ora_arg_1);
+    cpu.acc = ora_arg_2;
+    tick();
+    is_eql("ORA_Imediate acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpByteArg(0X05, 0X0A);
+    setMemByte(0X0A, ora_arg_1);
+    cpu.acc = ora_arg_2;
+    tick();
+    is_eql("ORA_Zero acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpByteArg(0X15, 0X0A);
+    setMemByte(0X0C, ora_arg_2);
+    cpu.acc = ora_arg_1;
+    cpu.x = 2;
+    tick();
+    is_eql("ORA_Zero_X acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpWordArg(0X0D, 0X2A, 0X01);
+    setMemByte(0X012A, ora_arg_1);
+    cpu.acc = ora_arg_2;
+    tick();
+    is_eql("ORA_Abs acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpWordArg(0X1D, 0X2A, 0X01);
+    setMemByte(0X012D, ora_arg_1);
+    cpu.acc = ora_arg_2;
+    cpu.x = 3;
+    tick();
+    is_eql("ORA_Abs_X acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpWordArg(0X19, 0X14, 0X01);
+    setMemByte(0X0117, ora_arg_1);
+    cpu.acc = ora_arg_2;
+    cpu.y = 3;
+    tick();
+    is_eql("ORA_Abs_Y acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpByteArg(0X01, 0X01);
+    setMemWord(0X03, 0XC1, 0X06);
+    setMemByte(0X06C1, ora_arg_2);
+    cpu.acc = ora_arg_1;
+    cpu.x = 2;
+    tick();
+    is_eql("ORA_Ind_X acc | val", cpu.acc, ora_res);
+
+    reset();
+    setOpByteArg(0X11, 0X02);
+    setMemWord(0X02, 0XC1, 0X06);
+    setMemByte(0X06C5, ora_arg_1);
+    cpu.acc = ora_arg_2;
+    cpu.y = 4;
+    tick();
+    is_eql("ORA_Ind_Y acc | val", cpu.acc, ora_res);
+
     // STA
 
     reset();
@@ -354,15 +507,6 @@ int main(int argc, char argv[]) {
     cpu.y = 0X23;
     tick();
     is_eql("STY_Abs sets Y value to mem addr", cpu.mem[0X0C02], 0X23);
-
-    // LSR
-
-    reset();
-    setOp(0X4A);
-    cpu.acc = 15;
-    tick();
-    is_eql("LSR_Acc shifts -> Acc value", cpu.acc, 7);
-    is_eql("and sets carry flag to 1", cpu.carry, 1);
 
     shutdown();
     return 0;
