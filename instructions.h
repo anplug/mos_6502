@@ -65,6 +65,7 @@ word getIndexedIndirectAddress(byte arg) {
     return ((word)addr_high << 8) | (word)addr_low;
 }
 
+// TODO: fix operand, could be memmory
 void checkState() {
     if (cpu.acc == 0) cpu.zero = 1;
     if (cpu.acc & 128) cpu.negative = 1;
@@ -191,6 +192,44 @@ void AND_Ind_Y() {
     INDIRECT_Y(AND);
     cpu.acc &= cpu.mem[getIndirectIndexedAddress(arg)];
     cpu.program_counter += 2;
+}
+
+// ASL
+
+void ASL(byte* arg) {
+    cpu.carry = (*arg & 128) ? 1 : 0;
+    *arg <<= 1;
+    checkState();
+}
+
+void ASL_Acc() {
+    ACCUMULATOR(ASL);
+    ASL(&cpu.acc);
+    cpu.program_counter += 1;
+}
+
+void ASL_Zero() {
+    ZERO_PAGE(ASL);
+    ASL(cpu.mem + arg);
+    cpu.program_counter += 2;
+}
+
+void ASL_Zero_X() {
+    ZERO_PAGE_X(ASL);
+    ASL(cpu.mem + arg + cpu.x);
+    cpu.program_counter += 2;
+}
+
+void ASL_Abs() {
+    ABSOLUTE(ASL);
+    ASL(cpu.mem + arg);
+    cpu.program_counter += 3;
+}
+
+void ASL_Abs_X() {
+    ABSOLUTE_X(ASL);
+    ASL(cpu.mem + arg + cpu.x);
+    cpu.program_counter += 3;
 }
 
 // LDA
@@ -461,44 +500,40 @@ void STY_Abs() {
 
 // LSR
 
+void LSR(byte* arg) {
+    cpu.carry = *arg & 1;
+    *arg >>= 1;
+    checkState();
+}
+
 void LSR_Acc() {
     ACCUMULATOR(LSR);
-    cpu.carry = cpu.acc & 1;
-    cpu.acc = cpu.acc >> 1;
+    LSR(&cpu.acc);
     cpu.program_counter += 1;
-    checkState();
 }
 
 void LSR_Zero() {
     ZERO_PAGE(LSR);
-    cpu.carry = cpu.mem[arg] & 1;
-    cpu.acc = cpu.mem[arg] >> 1;
+    LSR(cpu.mem + arg);
     cpu.program_counter += 2;
-    checkState();
 }
 
 void LSR_Zero_X() {
     ZERO_PAGE_X(LSR);
-    cpu.carry = cpu.mem[arg + cpu.x] & 1;
-    cpu.acc = cpu.mem[arg + cpu.x] >> 1;
+    LSR(cpu.mem + arg + cpu.x);
     cpu.program_counter += 2;
-    checkState();
 }
 
 void LSR_Abs() {
     ABSOLUTE(LSR);
-    cpu.carry = cpu.mem[arg] & 1;
-    cpu.acc = cpu.mem[arg] >> 1;
+    LSR(cpu.mem + arg);
     cpu.program_counter += 3;
-    checkState();
 }
 
 void LSR_Abs_X() {
     ABSOLUTE_X(LSR);
-    cpu.carry = cpu.mem[arg + cpu.x] & 1;
-    cpu.acc = cpu.mem[arg + cpu.x] >> 1;
+    LSR(cpu.mem + arg + cpu.x);
     cpu.program_counter += 3;
-    checkState();
 }
 
 inst_ptr_t inst_matrix[256] = {
@@ -519,6 +554,12 @@ inst_ptr_t inst_matrix[256] = {
     [0x39] = &AND_Abs_Y,
     [0x21] = &AND_Ind_X,
     [0x31] = &AND_Ind_Y,
+
+    [0x0A] = &ASL_Acc,
+    [0x06] = &ASL_Zero,
+    [0x16] = &ASL_Zero_X,
+    [0x0E] = &ASL_Abs,
+    [0x1E] = &ASL_Abs_X,
 
     [0xA9] = &LDA_Imediate,
     [0xA5] = &LDA_Zero,

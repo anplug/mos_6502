@@ -197,6 +197,61 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("AND_Ind_Y acc & val", cpu.acc, and_res);
 
+    // ASL
+
+    reset();
+    setOp(0x0A);
+    cpu.acc = 129;
+    tick();
+    is_eql("ASL_Acc shifts << Acc value", cpu.acc, 2);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOp(0x0A);
+    cpu.acc = 65; // 0100 0001 << 1 -> 1000 0010
+    tick();
+    is_eql("ASL_Acc shifts << Acc value with last bit 0", cpu.acc, 130);
+    is_eql("and sets carry flag to 0", cpu.carry, 0);
+    is_eql("and sets zero flag to 1", cpu.zero, 1);
+
+    reset();
+    setOpByteArg(0x06, 0x05);
+    cpu.mem[0x05] = 129;
+    tick();
+    is_eql("ASL_Zero shifts << Mem value", cpu.mem[0x05], 2);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpByteArg(0x06, 0x05);
+    cpu.mem[0x05] = 65; // 0100 0001 << 1 -> 1000 0010
+    tick();
+    is_eql("ASL_Zero shifts << Mem value with last bit 0", cpu.mem[0x05], 130);
+    is_eql("and sets carry flag to 0", cpu.carry, 0);
+    is_eql("and sets zero flag to 1", cpu.zero, 1);
+
+    reset();
+    setOpByteArg(0x16, 0x05);
+    cpu.mem[0x06] = 129;
+    cpu.x = 1;
+    tick();
+    is_eql("ASL_Zero_X shifts << Mem value", cpu.mem[0x06], 2);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpWordArg(0x0E, 0xFA, 0x01);
+    cpu.mem[0x01FA] = 129;
+    tick();
+    is_eql("ASL_Abs shifts << Mem value", cpu.mem[0x01FA], 2);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpWordArg(0x1E, 0xFA, 0x01);
+    cpu.mem[0x01FC] = 129;
+    cpu.x = 2;
+    tick();
+    is_eql("ASL_Abs_X shifts -> Mem value", cpu.mem[0x01FC], 2);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
     // LDA
 
     reset();
@@ -332,7 +387,37 @@ int main(int argc, char argv[]) {
     setOp(0x4A);
     cpu.acc = 15;
     tick();
-    is_eql("LSR_Acc shifts -> Acc value", cpu.acc, 7);
+    is_eql("LSR_Acc shifts >> Acc value", cpu.acc, 7);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpByteArg(0x46, 0x05);
+    cpu.mem[0x05] = 15;
+    tick();
+    is_eql("LSR_Zero shifts >> Mem value", cpu.mem[0x05], 7);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpByteArg(0x56, 0x05);
+    cpu.mem[0x06] = 15;
+    cpu.x = 1;
+    tick();
+    is_eql("LSR_Zero_X shifts >> Mem value", cpu.mem[0x06], 7);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpWordArg(0x4E, 0xFA, 0x01);
+    cpu.mem[0x01FA] = 15;
+    tick();
+    is_eql("LSR_Abs shifts >> Mem value", cpu.mem[0x01FA], 7);
+    is_eql("and sets carry flag to 1", cpu.carry, 1);
+
+    reset();
+    setOpWordArg(0x5E, 0xFA, 0x01);
+    cpu.mem[0x01FC] = 15;
+    cpu.x = 2;
+    tick();
+    is_eql("LSR_Abs_X shifts >> Mem value", cpu.mem[0x01FC], 7);
     is_eql("and sets carry flag to 1", cpu.carry, 1);
 
     // ORA
