@@ -8,8 +8,8 @@ void init(uint32_t mem_size) {
     cpu.mem_size = mem_size - 1;
     cpu.mem = malloc(mem_size);
     memset(cpu.mem, 0, mem_size + 1);
-    cpu.program_counter = 0X600;
-    cpu.stack_ptr = 0XFF;
+    cpu.program_counter = 0x600;
+    cpu.stack_ptr = 0xFF;
 }
 
 void reset() {

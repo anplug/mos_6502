@@ -5,33 +5,33 @@ int main(int argc, char argv[]) {
     printComputerInfo();
 
     //byte initialMem[] = {
-    //    0XA9, 0X01,
-    //    0X8D, 0X00, 0X02,
-    //    0XA9, 0X05,
-    //    0X8D, 0X01, 0X02,
-    //    0XA9, 0X0A,
-    //    0X8D, 0X02, 0X02
+    //    0xA9, 0x01,
+    //    0x8D, 0x00, 0x02,
+    //    0xA9, 0x05,
+    //    0x8D, 0x01, 0x02,
+    //    0xA9, 0x0A,
+    //    0x8D, 0x02, 0x02
     //};
 
     byte mem[] = {
-        0XA9, 0X26,
-        0X85, 0X03,
-        0XA9, 0X25,
-        0X85, 0X02,
-        0XA9, 0X24,
-        0X85, 0X01,
+        0xA9, 0x26,
+        0x85, 0x03,
+        0xA9, 0x25,
+        0x85, 0x02,
+        0xA9, 0x24,
+        0x85, 0x01,
 
-        0XA9, 0X23,
-        0X85, 0X00,
-        0XA9, 0X00,
-        0XA2, 0X02,
-        0XB5, 0X00
+        0xA9, 0x23,
+        0x85, 0x00,
+        0xA9, 0x00,
+        0xA2, 0x02,
+        0xB5, 0x00
     };
 
-    setMem(0X600, 22, mem); // Virtual ROM loading
+    setMem(0x600, 22, mem); // Virtual ROM loading
     execute();
 
-    memDump(0X0000, 32);
+    memDump(0x0000, 32);
 
     shutdown();
     return 0;
