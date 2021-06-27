@@ -201,10 +201,11 @@ int main(int argc, char argv[]) {
 
     reset();
     setOp(0x0A);
-    cpu.acc = 129;
+    cpu.acc = 129; // 1000 0001 << 1 -> 0000 0010
     tick();
     is_eql("ASL_Acc shifts << Acc value", cpu.acc, 2);
     is_eql("and sets carry flag to 1", cpu.carry, 1);
+    is_eql("and sets negative flag to 0", cpu.negative, 0);
 
     reset();
     setOp(0x0A);
@@ -212,7 +213,7 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("ASL_Acc shifts << Acc value with last bit 0", cpu.acc, 130);
     is_eql("and sets carry flag to 0", cpu.carry, 0);
-    is_eql("and sets zero flag to 1", cpu.zero, 1);
+    is_eql("and sets negative flag to 1", cpu.negative, 1);
 
     reset();
     setOpByteArg(0x06, 0x05);
@@ -227,7 +228,7 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("ASL_Zero shifts << Mem value with last bit 0", cpu.mem[0x05], 130);
     is_eql("and sets carry flag to 0", cpu.carry, 0);
-    is_eql("and sets zero flag to 1", cpu.zero, 1);
+    is_eql("and sets negative flag to 1", cpu.negative, 1);
 
     reset();
     setOpByteArg(0x16, 0x05);

@@ -65,10 +65,9 @@ word getIndexedIndirectAddress(byte arg) {
     return ((word)addr_high << 8) | (word)addr_low;
 }
 
-// TODO: fix operand, could be memmory
-void checkState() {
-    if (cpu.acc == 0) cpu.zero = 1;
-    if (cpu.acc & 128) cpu.negative = 1;
+void checkState(byte* operand_ptr) {
+    if (*operand_ptr == 0) cpu.zero = 1;
+    if (*operand_ptr & 128) cpu.negative = 1;
 }
 
 // ADC
@@ -93,7 +92,7 @@ void ADC(byte arg) {
     } else {
         cpu.overflow = 0;
     }
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void ADC_Imediate() {
@@ -199,7 +198,7 @@ void AND_Ind_Y() {
 void ASL(byte* arg) {
     cpu.carry = (*arg & 128) ? 1 : 0;
     *arg <<= 1;
-    checkState();
+    checkState(arg);
 }
 
 void ASL_Acc() {
@@ -238,56 +237,56 @@ void LDA_Imediate() {
     IMEDIATE(LDA);
     cpu.acc = arg;
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Zero() {
     ZERO_PAGE(LDA);
     cpu.acc = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Zero_X() {
     ZERO_PAGE_X(LDA);
     cpu.acc = cpu.mem[arg + cpu.x];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Abs() {
     ABSOLUTE(LDA);
     cpu.acc = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Abs_X() {
     ABSOLUTE_X(LDA);
     cpu.acc = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Abs_Y() {
     ABSOLUTE_Y(LDA);
     cpu.acc = cpu.mem[arg + cpu.y];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Ind_X() {
     INDIRECT_X(LDA);
     cpu.acc = cpu.mem[getIndexedIndirectAddress(arg)];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Ind_Y() {
     INDIRECT_Y(LDA);
     cpu.acc = cpu.mem[getIndirectIndexedAddress(arg)];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 // LDX
@@ -296,35 +295,35 @@ void LDX_Imediate() {
     IMEDIATE(LDX);
     cpu.x = arg;
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Zero() {
     ZERO_PAGE(LDX);
     cpu.x = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Zero_Y() {
     ZERO_PAGE_Y(LDX);
     cpu.x = cpu.mem[arg + cpu.y];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Abs() {
     ABSOLUTE(LDX);
     cpu.x = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Abs_Y() {
     ABSOLUTE_Y(LDX);
     cpu.x = cpu.mem[arg + cpu.y];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.x);
 }
 
 // LDY
@@ -333,35 +332,35 @@ void LDY_Imediate() {
     IMEDIATE(LDY);
     cpu.y = arg;
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Zero() {
     ZERO_PAGE(LDY);
     cpu.y = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Zero_Y() {
     ZERO_PAGE_X(LDY);
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Abs() {
     ABSOLUTE(LDY);
     cpu.y = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Abs_X() {
     ABSOLUTE_X(LDY);
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.y);
 }
 
 // ORA
@@ -503,7 +502,7 @@ void STY_Abs() {
 void LSR(byte* arg) {
     cpu.carry = *arg & 1;
     *arg >>= 1;
-    checkState();
+    checkState(arg);
 }
 
 void LSR_Acc() {
