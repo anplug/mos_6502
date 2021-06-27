@@ -65,9 +65,9 @@ word getIndexedIndirectAddress(byte arg) {
     return ((word)addr_high << 8) | (word)addr_low;
 }
 
-void checkState() {
-    if (cpu.acc == 0) cpu.zero = 1;
-    if (cpu.acc & 128) cpu.negative = 1;
+void checkState(byte* operand_ptr) {
+    if (*operand_ptr == 0) cpu.zero = 1;
+    if (*operand_ptr & 128) cpu.negative = 1;
 }
 
 // ADC
@@ -92,7 +92,7 @@ void ADC(byte arg) {
     } else {
         cpu.overflow = 0;
     }
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void ADC_Imediate() {
@@ -193,62 +193,100 @@ void AND_Ind_Y() {
     cpu.program_counter += 2;
 }
 
+// ASL
+
+void ASL(byte* arg) {
+    cpu.carry = (*arg & 128) ? 1 : 0;
+    *arg <<= 1;
+    checkState(arg);
+}
+
+void ASL_Acc() {
+    ACCUMULATOR(ASL);
+    ASL(&cpu.acc);
+    cpu.program_counter += 1;
+}
+
+void ASL_Zero() {
+    ZERO_PAGE(ASL);
+    ASL(cpu.mem + arg);
+    cpu.program_counter += 2;
+}
+
+void ASL_Zero_X() {
+    ZERO_PAGE_X(ASL);
+    ASL(cpu.mem + arg + cpu.x);
+    cpu.program_counter += 2;
+}
+
+void ASL_Abs() {
+    ABSOLUTE(ASL);
+    ASL(cpu.mem + arg);
+    cpu.program_counter += 3;
+}
+
+void ASL_Abs_X() {
+    ABSOLUTE_X(ASL);
+    ASL(cpu.mem + arg + cpu.x);
+    cpu.program_counter += 3;
+}
+
 // LDA
 
 void LDA_Imediate() {
     IMEDIATE(LDA);
     cpu.acc = arg;
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Zero() {
     ZERO_PAGE(LDA);
     cpu.acc = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Zero_X() {
     ZERO_PAGE_X(LDA);
     cpu.acc = cpu.mem[arg + cpu.x];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Abs() {
     ABSOLUTE(LDA);
     cpu.acc = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Abs_X() {
     ABSOLUTE_X(LDA);
     cpu.acc = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Abs_Y() {
     ABSOLUTE_Y(LDA);
     cpu.acc = cpu.mem[arg + cpu.y];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Ind_X() {
     INDIRECT_X(LDA);
     cpu.acc = cpu.mem[getIndexedIndirectAddress(arg)];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 void LDA_Ind_Y() {
     INDIRECT_Y(LDA);
     cpu.acc = cpu.mem[getIndirectIndexedAddress(arg)];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.acc);
 }
 
 // LDX
@@ -257,35 +295,35 @@ void LDX_Imediate() {
     IMEDIATE(LDX);
     cpu.x = arg;
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Zero() {
     ZERO_PAGE(LDX);
     cpu.x = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Zero_Y() {
     ZERO_PAGE_Y(LDX);
     cpu.x = cpu.mem[arg + cpu.y];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Abs() {
     ABSOLUTE(LDX);
     cpu.x = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.x);
 }
 
 void LDX_Abs_Y() {
     ABSOLUTE_Y(LDX);
     cpu.x = cpu.mem[arg + cpu.y];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.x);
 }
 
 // LDY
@@ -294,35 +332,35 @@ void LDY_Imediate() {
     IMEDIATE(LDY);
     cpu.y = arg;
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Zero() {
     ZERO_PAGE(LDY);
     cpu.y = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Zero_Y() {
     ZERO_PAGE_X(LDY);
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 2;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Abs() {
     ABSOLUTE(LDY);
     cpu.y = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.y);
 }
 
 void LDY_Abs_X() {
     ABSOLUTE_X(LDY);
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
-    checkState();
+    checkState(&cpu.y);
 }
 
 // ORA
@@ -461,44 +499,40 @@ void STY_Abs() {
 
 // LSR
 
+void LSR(byte* arg) {
+    cpu.carry = *arg & 1;
+    *arg >>= 1;
+    checkState(arg);
+}
+
 void LSR_Acc() {
     ACCUMULATOR(LSR);
-    cpu.carry = cpu.acc & 1;
-    cpu.acc = cpu.acc >> 1;
+    LSR(&cpu.acc);
     cpu.program_counter += 1;
-    checkState();
 }
 
 void LSR_Zero() {
     ZERO_PAGE(LSR);
-    cpu.carry = cpu.mem[arg] & 1;
-    cpu.acc = cpu.mem[arg] >> 1;
+    LSR(cpu.mem + arg);
     cpu.program_counter += 2;
-    checkState();
 }
 
 void LSR_Zero_X() {
     ZERO_PAGE_X(LSR);
-    cpu.carry = cpu.mem[arg + cpu.x] & 1;
-    cpu.acc = cpu.mem[arg + cpu.x] >> 1;
+    LSR(cpu.mem + arg + cpu.x);
     cpu.program_counter += 2;
-    checkState();
 }
 
 void LSR_Abs() {
     ABSOLUTE(LSR);
-    cpu.carry = cpu.mem[arg] & 1;
-    cpu.acc = cpu.mem[arg] >> 1;
+    LSR(cpu.mem + arg);
     cpu.program_counter += 3;
-    checkState();
 }
 
 void LSR_Abs_X() {
     ABSOLUTE_X(LSR);
-    cpu.carry = cpu.mem[arg + cpu.x] & 1;
-    cpu.acc = cpu.mem[arg + cpu.x] >> 1;
+    LSR(cpu.mem + arg + cpu.x);
     cpu.program_counter += 3;
-    checkState();
 }
 
 inst_ptr_t inst_matrix[256] = {
@@ -519,6 +553,12 @@ inst_ptr_t inst_matrix[256] = {
     [0x39] = &AND_Abs_Y,
     [0x21] = &AND_Ind_X,
     [0x31] = &AND_Ind_Y,
+
+    [0x0A] = &ASL_Acc,
+    [0x06] = &ASL_Zero,
+    [0x16] = &ASL_Zero_X,
+    [0x0E] = &ASL_Abs,
+    [0x1E] = &ASL_Abs_X,
 
     [0xA9] = &LDA_Imediate,
     [0xA5] = &LDA_Zero,
