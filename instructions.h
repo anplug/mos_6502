@@ -3,6 +3,9 @@
 #define ACCUMULATOR(ins) \
     printf(#ins " A\n");
 
+#define IMPLICIT(ins) \
+    printf(#ins);
+
 #define IMEDIATE(ins) \
     byte arg = loadByteArg(); \
     printf(#ins " #$%.2X\n", arg);
@@ -535,6 +538,44 @@ void LSR_Abs_X() {
     cpu.program_counter += 3;
 }
 
+// Register transfer operations
+
+void TAX_Impl() {
+    IMPLICIT(TAX);
+    cpu.x = cpu.acc;
+    cpu.program_counter += 1;
+}
+
+void TAY_Impl() {
+    IMPLICIT(TAY);
+    cpu.y = cpu.acc;
+    cpu.program_counter += 1;
+}
+
+void TXA_Impl() {
+    IMPLICIT(TXA);
+    cpu.acc = cpu.x;
+    cpu.program_counter += 1;
+}
+
+void TYA_Impl() {
+    IMPLICIT(TYA);
+    cpu.acc = cpu.y;
+    cpu.program_counter += 1;
+}
+
+void TSX_Impl() {
+    IMPLICIT(TSX);
+    cpu.x = cpu.stack_ptr;
+    cpu.program_counter += 1;
+}
+
+void TXS_Impl() {
+    IMPLICIT(TXS);
+    cpu.stack_ptr = cpu.x;
+    cpu.program_counter += 1;
+}
+
 inst_ptr_t inst_matrix[256] = {
     [0x69] = &ADC_Imediate,
     [0x65] = &ADC_Zero,
@@ -610,5 +651,12 @@ inst_ptr_t inst_matrix[256] = {
 
     [0x84] = &STY_Zero,
     [0x94] = &STY_Zero_X,
-    [0x8C] = &STY_Abs
+    [0x8C] = &STY_Abs,
+
+    [0xAA] = &TAX_Impl,
+    [0xA8] = &TAY_Impl,
+    [0x8A] = &TXA_Impl,
+    [0x98] = &TYA_Impl,
+    [0xBA] = &TSX_Impl,
+    [0x9A] = &TXS_Impl
 };

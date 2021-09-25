@@ -594,6 +594,46 @@ int main(int argc, char argv[]) {
     tick();
     is_eql("STY_Abs sets Y value to mem addr", cpu.mem[0x0C02], 0x23);
 
+    // Register transafer operations
+    //
+    //
+
+    reset();
+    setOp(0xAA);
+    cpu.acc = 0x23;
+    tick();
+    is_eql("TAX_Impl sets Acc value to X", cpu.x, 0x23);
+
+    reset();
+    setOp(0xA8);
+    cpu.acc = 0x24;
+    tick();
+    is_eql("TAY_Impl sets Acc value to Y", cpu.y, 0x24);
+
+    reset();
+    setOp(0x8A);
+    cpu.x = 0x25;
+    tick();
+    is_eql("TXA_Impl sets X value to Acc", cpu.acc, 0x25);
+
+    reset();
+    setOp(0x98);
+    cpu.y = 0x26;
+    tick();
+    is_eql("TYA_Impl sets Y value to Acc", cpu.acc, 0x26);
+
+    reset();
+    setOp(0xBA);
+    cpu.stack_ptr = 0x27;
+    tick();
+    is_eql("TSX_Impl sets stack pointer value to X", cpu.x, 0x27);
+
+    reset();
+    setOp(0x9A);
+    cpu.x = 0x28;
+    tick();
+    is_eql("TSX_Impl sets X value to stack pointer", cpu.stack_ptr, 0x28);
+
     shutdown();
     return 0;
 }
