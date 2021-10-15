@@ -68,7 +68,7 @@ word getIndexedIndirectAddress(byte arg) {
     return ((word)addr_high << 8) | (word)addr_low;
 }
 
-void checkState(byte* operand_ptr) {
+void checkNegZero(byte* operand_ptr) {
     if (*operand_ptr == 0) cpu.zero = 1;
     if (*operand_ptr & 128) cpu.negative = 1;
 }
@@ -95,7 +95,7 @@ void ADC(byte arg) {
     } else {
         cpu.overflow = 0;
     }
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void ADC_Imediate() {
@@ -201,7 +201,7 @@ void AND_Ind_Y() {
 void ASL(byte* arg) {
     cpu.carry = (*arg & 128) ? 1 : 0;
     *arg <<= 1;
-    checkState(arg);
+    checkNegZero(arg);
 }
 
 void ASL_Acc() {
@@ -240,56 +240,56 @@ void LDA_Imediate() {
     IMEDIATE(LDA);
     cpu.acc = arg;
     cpu.program_counter += 2;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Zero() {
     ZERO_PAGE(LDA);
     cpu.acc = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Zero_X() {
     ZERO_PAGE_X(LDA);
     cpu.acc = cpu.mem[arg + cpu.x];
     cpu.program_counter += 2;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Abs() {
     ABSOLUTE(LDA);
     cpu.acc = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Abs_X() {
     ABSOLUTE_X(LDA);
     cpu.acc = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Abs_Y() {
     ABSOLUTE_Y(LDA);
     cpu.acc = cpu.mem[arg + cpu.y];
     cpu.program_counter += 3;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Ind_X() {
     INDIRECT_X(LDA);
     cpu.acc = cpu.mem[getIndexedIndirectAddress(arg)];
     cpu.program_counter += 2;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 void LDA_Ind_Y() {
     INDIRECT_Y(LDA);
     cpu.acc = cpu.mem[getIndirectIndexedAddress(arg)];
     cpu.program_counter += 2;
-    checkState(&cpu.acc);
+    checkNegZero(&cpu.acc);
 }
 
 // LDX
@@ -298,35 +298,35 @@ void LDX_Imediate() {
     IMEDIATE(LDX);
     cpu.x = arg;
     cpu.program_counter += 2;
-    checkState(&cpu.x);
+    checkNegZero(&cpu.x);
 }
 
 void LDX_Zero() {
     ZERO_PAGE(LDX);
     cpu.x = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState(&cpu.x);
+    checkNegZero(&cpu.x);
 }
 
 void LDX_Zero_Y() {
     ZERO_PAGE_Y(LDX);
     cpu.x = cpu.mem[arg + cpu.y];
     cpu.program_counter += 2;
-    checkState(&cpu.x);
+    checkNegZero(&cpu.x);
 }
 
 void LDX_Abs() {
     ABSOLUTE(LDX);
     cpu.x = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState(&cpu.x);
+    checkNegZero(&cpu.x);
 }
 
 void LDX_Abs_Y() {
     ABSOLUTE_Y(LDX);
     cpu.x = cpu.mem[arg + cpu.y];
     cpu.program_counter += 3;
-    checkState(&cpu.x);
+    checkNegZero(&cpu.x);
 }
 
 // LDY
@@ -335,35 +335,35 @@ void LDY_Imediate() {
     IMEDIATE(LDY);
     cpu.y = arg;
     cpu.program_counter += 2;
-    checkState(&cpu.y);
+    checkNegZero(&cpu.y);
 }
 
 void LDY_Zero() {
     ZERO_PAGE(LDY);
     cpu.y = cpu.mem[arg];
     cpu.program_counter += 2;
-    checkState(&cpu.y);
+    checkNegZero(&cpu.y);
 }
 
 void LDY_Zero_Y() {
     ZERO_PAGE_X(LDY);
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 2;
-    checkState(&cpu.y);
+    checkNegZero(&cpu.y);
 }
 
 void LDY_Abs() {
     ABSOLUTE(LDY);
     cpu.y = cpu.mem[arg];
     cpu.program_counter += 3;
-    checkState(&cpu.y);
+    checkNegZero(&cpu.y);
 }
 
 void LDY_Abs_X() {
     ABSOLUTE_X(LDY);
     cpu.y = cpu.mem[arg + cpu.x];
     cpu.program_counter += 3;
-    checkState(&cpu.y);
+    checkNegZero(&cpu.y);
 }
 
 // ORA
@@ -505,7 +505,7 @@ void STY_Abs() {
 void LSR(byte* arg) {
     cpu.carry = *arg & 1;
     *arg >>= 1;
-    checkState(arg);
+    checkNegZero(arg);
 }
 
 void LSR_Acc() {
@@ -544,30 +544,35 @@ void TAX_Impl() {
     IMPLICIT(TAX);
     cpu.x = cpu.acc;
     cpu.program_counter += 1;
+    checkNegZero(&cpu.x);
 }
 
 void TAY_Impl() {
     IMPLICIT(TAY);
     cpu.y = cpu.acc;
     cpu.program_counter += 1;
+    checkNegZero(&cpu.y);
 }
 
 void TXA_Impl() {
     IMPLICIT(TXA);
     cpu.acc = cpu.x;
     cpu.program_counter += 1;
+    checkNegZero(&cpu.acc);
 }
 
 void TYA_Impl() {
     IMPLICIT(TYA);
     cpu.acc = cpu.y;
     cpu.program_counter += 1;
+    checkNegZero(&cpu.acc);
 }
 
 void TSX_Impl() {
     IMPLICIT(TSX);
     cpu.x = cpu.stack_ptr;
     cpu.program_counter += 1;
+    checkNegZero(&cpu.x);
 }
 
 void TXS_Impl() {
