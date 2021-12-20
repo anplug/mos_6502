@@ -1,0 +1,4 @@
+// TODO: BIT
+// TODO: CMP
+// TODO: CPX
+// TODO: CPY

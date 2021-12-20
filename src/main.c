@@ -1,6 +1,6 @@
 #include "cpu.h"
 
-int main(int argc, char argv[]) {
+int main(int argc, char** argv) {
     init(64 * 1024);
     printComputerInfo();
 

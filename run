@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p build
-gcc main.c cpu.c -g -o build/mos
+gcc src/main.c src/cpu.c -g -o build/mos
 
 if [ $? -eq 0 ]; then
 ./build/mos

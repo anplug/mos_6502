@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p build
-gcc cpu.c tests.c -g -o build/tests
+gcc src/cpu.c src/tests.c -g -o build/tests
 
 if [ $? -eq 0 ]; then
 ./build/tests
