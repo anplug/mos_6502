@@ -21,7 +21,7 @@ void is_eql(const char* str, word res, word expected) {
     printf("\033[0m"); // Back to default
 }
 
-int main(int argc, char argv[]) {
+int main(int argc, char** argv) {
     init(4 * 1024);
 
     // ADC

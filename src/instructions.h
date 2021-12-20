@@ -1,5 +1,7 @@
 #include "cpu.h"
 
+extern struct CPU cpu;
+
 #define ACCUMULATOR(ins) \
     printf(#ins " A\n");
 
