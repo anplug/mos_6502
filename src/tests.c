@@ -13,12 +13,10 @@ void is_eql(const char* str, word res, word expected) {
     }
     printf("%s => ", str);
     if (is_failed) {
-        printf("\033[0;31m"); // Red
+        printf("\033[0;31m%s\033[0m\n", spec_result); // Red
     } else {
-        printf("\033[0;32m"); // Green
+        printf("\033[0;32m%s\033[0m\n", spec_result); // Green
     }
-    printf("%s\n", spec_result);
-    printf("\033[0m"); // Back to default
 }
 
 int main(int argc, char** argv) {
