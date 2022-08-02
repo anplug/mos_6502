@@ -1,34 +1,29 @@
 #include "cpu.h"
+#include "program_loader.h"
 
-int main(int argc, char** argv) {
+#define DEFAULT_PROGRAM "./samples/default.dsk"
+
+int main(int argc, char* argv[]) {
     init(64 * 1024);
     printComputerInfo();
 
-    //byte initialMem[] = {
-    //    0xA9, 0x01,
-    //    0x8D, 0x00, 0x02,
-    //    0xA9, 0x05,
-    //    0x8D, 0x01, 0x02,
-    //    0xA9, 0x0A,
-    //    0x8D, 0x02, 0x02
-    //};
+    char* file_name;
 
-    byte mem[] = {
-        0xA9, 0x26,
-        0x85, 0x03,
-        0xA9, 0x25,
-        0x85, 0x02,
-        0xA9, 0x24,
-        0x85, 0x01,
+    if (argc == 1) {
+        printf("Fallback to default file\n");
+        file_name = DEFAULT_PROGRAM;
+    }
+    else if (argc == 2) {
+        file_name  = argv[1];
+    }
 
-        0xA9, 0x23,
-        0x85, 0x00,
-        0xA9, 0x00,
-        0xA2, 0x02,
-        0xB5, 0x00
-    };
+    int program_size = 0;
+    byte* program = loadProgram(file_name, &program_size);
 
-    setMem(0x600, 22, mem); // Virtual ROM loading
+    printf("Program size is %dKB\n", bytesToKB(program_size));
+    printHex(program, program_size);
+
+    setMem(0x600, program_size, program); // Virtual ROM loading
     execute();
 
     memDump(0x0000, 32);
