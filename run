@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir -p build
-gcc src/main.c src/cpu.c -g -o build/mos
+gcc src/main.c src/cpu.c src/program_loader.c src/utils.c -g -o build/mos
 
 if [ $? -eq 0 ]; then
-./build/mos
+./build/mos $1
 fi

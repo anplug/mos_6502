@@ -2,16 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 
 #ifndef CPU_H
 #define CPU_H
 
 #define DUMP_COLUMNS 16
 
-typedef uint8_t byte;
-typedef unsigned short word;
 typedef void (*inst_ptr_t)();
-typedef char bool;
 
 struct CPU {
     byte* mem;

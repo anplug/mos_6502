@@ -48,7 +48,7 @@ void printState() {
 }
 
 void printComputerInfo() {
-    printf("MOS 6502 (%dKB)\n\n", (cpu.mem_size + 1) / 1024);
+    printf("MOS 6502 (%dKB)\n\n", bytesToKB(cpu.mem_size));
 }
 
 void setMem(word mem_addr, byte bytes, byte* data) {
