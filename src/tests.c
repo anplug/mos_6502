@@ -632,6 +632,45 @@ int main(int argc, char** argv) {
     tick();
     is_eql("TSX_Impl sets X value to stack pointer", cpu.stack_ptr, 0x28);
 
+    reset();
+    setOp(0x48);
+    cpu.acc = 0x29;
+    tick();
+    is_eql("PHA_Impl sets stack with acc value", cpu.mem[0x1fe], 0x29);
+    is_eql("PHA_Impl stack pointer is changed", cpu.stack_ptr, 0xfe);
+
+    reset();
+    is_eql("setStatusRegister() make sure status register is empty", statusRegister(), 0x0);
+    setStatusRegister(0b11011010);
+    is_eql("statusRegister() reads status register", statusRegister(), 0b11011010);
+    is_eql("setStatusRegister() negative flag is correct", cpu.negative, 1);
+    is_eql("setStatusRegister() overflow flag is correct", cpu.overflow, 1);
+    is_eql("setStatusRegister() break_command flag is correct", cpu.break_command, 1);
+    is_eql("setStatusRegister() decimal_mode flag is correct", cpu.decimal_mode, 1);
+    is_eql("setStatusRegister() interrupt_disabled flag is correct", cpu.interrupt_disabled, 0);
+    is_eql("setStatusRegister() zero flag is correct", cpu.zero, 1);
+    is_eql("setStatusRegister() carry flag is correct", cpu.carry, 0);
+
+    reset();
+    setOp(0x08);
+    is_eql("PHP_Impl make sure stack is empty", cpu.mem[0x1fe], 0);
+    setStatusRegister(0b11001011);
+    tick();
+    is_eql("PHP_Impl sets stack with status register value", cpu.mem[0x1fe], 0b11001011);
+    is_eql("PHP_Impl stack pointer is changed", cpu.stack_ptr, 0xfe);
+
+    reset();
+    setOp(0x68);
+    cpu.mem[0x1ff] = 0x31;
+    tick();
+    is_eql("PLA_Impl sets acc with value from stack", cpu.acc, 0x31);
+
+    reset();
+    setOp(0x28);
+    cpu.mem[0x1ff] = 0b11010110;
+    tick();
+    is_eql("PLP_Impl sets status register with value from stack", statusRegister(), 0b11010110);
+
     shutdown();
     return 0;
 }

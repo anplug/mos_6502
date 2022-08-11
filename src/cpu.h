@@ -43,6 +43,8 @@ void setMemWord(word mem_addr, byte data1, byte data2);
 void setOp(byte optcode);
 void setOpByteArg(byte optcode, byte arg);
 void setOpWordArg(byte optcode, byte arg1, byte arg2);
+void setStatusRegister(byte);
+byte statusRegister();
 void memDump(word mem_addr, byte bytes);
 void execute();
 short tick();

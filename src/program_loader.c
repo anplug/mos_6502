@@ -23,11 +23,12 @@ byte* loadProgram(char file_name[], int* size) {
     FILE *file = fopen(file_name, "rb");
     *size = 0;
 
-    printf("File: [%s] ", file_name);
+    printf("Loading %s...\n", file_name);
 
-    if (fileAbsent(file)) return NULL;
-
-    printf("loading...\n");
+    if (fileAbsent(file)) {
+        printf("File loading failed!!!");
+        return NULL;
+    }
 
     byte* program = malloc(CHUNK_SIZE);
     byte* realloc_buffer = NULL;

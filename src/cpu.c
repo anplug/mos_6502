@@ -81,6 +81,21 @@ void setOpWordArg(byte opcode, byte arg1, byte arg2) {
     cpu.mem[cpu.program_counter + 2] = arg2;
 }
 
+void setStatusRegister(byte val) {
+    cpu.carry = val & 1;
+    cpu.zero = (val >> 1) & 1;
+    cpu.interrupt_disabled = (val >> 2) & 1;
+    cpu.decimal_mode = (val >> 3) & 1;
+    cpu.break_command = (val >> 4) & 1;
+    cpu.overflow = (val >> 6) & 1;
+    cpu.negative = (val >> 7) & 1;
+}
+
+byte statusRegister() {
+    return (cpu.negative << 7) + (cpu.overflow << 6) + (cpu.break_command << 4) +
+    (cpu.decimal_mode << 3) + (cpu.interrupt_disabled << 2) + (cpu.zero << 1) + cpu.carry;
+}
+
 void memDump(word mem_addr, byte bytes) {
     printf("| MEM DUMP (%dB)\n", bytes);
     for (byte i = 0; i <= (bytes - 1) / DUMP_COLUMNS; ++i) {
@@ -94,7 +109,7 @@ void memDump(word mem_addr, byte bytes) {
 
 void execute() {
     memDump(cpu.program_counter, 8);
-    getchar();
+    getchar(); // Temporarily, to step through program by pressing keys
     printState();
     if (tick() == 0) {
         execute();
@@ -104,6 +119,7 @@ void execute() {
 short tick() {
     byte opcode = cpu.mem[cpu.program_counter];
     if (!is_opcode_valid(opcode)) {
+        printf("Invalid opcode, abort processing!!!");
         return -1;
     }
     inst_ptr_t instruction = inst_matrix[opcode];

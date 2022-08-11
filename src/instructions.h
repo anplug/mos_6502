@@ -103,5 +103,11 @@ inst_ptr_t inst_matrix[256] = {
     [0x8A] = &TXA_Impl,
     [0x98] = &TYA_Impl,
     [0xBA] = &TSX_Impl,
-    [0x9A] = &TXS_Impl
+    [0x9A] = &TXS_Impl,
+
+    // stack.h
+    [0x48] = &PHA_Impl,
+    [0x08] = &PHP_Impl,
+    [0x68] = &PLA_Impl,
+    [0x28] = &PLP_Impl
 };
