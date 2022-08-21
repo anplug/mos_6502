@@ -9,7 +9,7 @@ extern struct CPU cpu;
     printf(#ins " A\n");
 
 #define IMPLICIT(ins) \
-    printf(#ins);
+    printf(#ins "\n");
 
 #define IMEDIATE(ins) \
     byte arg = loadByteArg(); \

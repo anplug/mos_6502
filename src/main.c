@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     char* file_name;
 
     if (argc == 1) {
-        printf("Fallback to default file\n");
+        printf("No file specified, fallback to default\n");
         file_name = DEFAULT_PROGRAM;
     }
     else if (argc == 2) {
@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     int program_size = 0;
     byte* program = loadProgram(file_name, &program_size);
 
-    printf("Program size is %dKB\n", bytesToKB(program_size));
+    printf("Program size is %dKB (%dB)\n", bytesToKB(program_size), program_size);
     printHex(program, program_size);
 
     setMem(0x600, program_size, program); // Virtual ROM loading
