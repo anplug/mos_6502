@@ -50,7 +50,55 @@ void AND_Ind_Y() {
     cpu.program_counter += 2;
 }
 
-// TODO: EOR
+// EOR
+
+void EOR_Imediate() {
+    IMEDIATE(EOR);
+    cpu.acc |= arg;
+    cpu.program_counter += 2;
+}
+
+void EOR_Zero() {
+    ZERO_PAGE(EOR);
+    cpu.acc |= cpu.mem[arg];
+    cpu.program_counter += 2;
+}
+
+void EOR_Zero_X() {
+    ZERO_PAGE_X(EOR);
+    cpu.acc |= cpu.mem[arg + cpu.x];
+    cpu.program_counter += 2;
+}
+
+void EOR_Abs() {
+    ABSOLUTE(EOR);
+    cpu.acc |= cpu.mem[arg];
+    cpu.program_counter += 3;
+}
+
+void EOR_Abs_X() {
+    ABSOLUTE_X(EOR);
+    cpu.acc |= cpu.mem[arg + cpu.x];
+    cpu.program_counter += 3;
+}
+
+void EOR_Abs_Y() {
+    ABSOLUTE_Y(EOR);
+    cpu.acc |= cpu.mem[arg + cpu.y];
+    cpu.program_counter += 3;
+}
+
+void EOR_Ind_X() {
+    INDIRECT_X(EOR);
+    cpu.acc |= cpu.mem[getIndexedIndirectAddress(arg)];
+    cpu.program_counter += 2;
+}
+
+void EOR_Ind_Y() {
+    INDIRECT_Y(EOR);
+    cpu.acc |= cpu.mem[getIndirectIndexedAddress(arg)];
+    cpu.program_counter += 2;
+}
 
 // ORA
 

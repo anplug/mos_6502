@@ -78,6 +78,16 @@ inst_ptr_t inst_matrix[256] = {
     [0x01] = &ORA_Ind_X,
     [0x11] = &ORA_Ind_Y,
 
+    // logical.h
+    [0x49] = &EOR_Imediate,
+    [0x45] = &EOR_Zero,
+    [0x55] = &EOR_Zero_X,
+    [0x4D] = &EOR_Abs,
+    [0x5D] = &EOR_Abs_X,
+    [0x59] = &EOR_Abs_Y,
+    [0x41] = &EOR_Ind_X,
+    [0x51] = &EOR_Ind_Y,
+
     // mem.h
     [0x85] = &STA_Zero,
     [0x95] = &STA_Zero_X,
